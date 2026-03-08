@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LifeOS Reference Docs</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+            background-color: #ffffff;
+            color: #37352f;
+            overflow: hidden;
+        }
+
+        /* Notion-like Sidebar Folder Aesthetics */
+        .sidebar {
+            background-color: #fbfbfa;
+            border-right: 1px solid #edece9;
+        }
+
+        .folder-group {
+            margin-bottom: 2px;
+        }
+
+        .folder-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            font-size: 14.5px;
+            color: #37352f;
+            font-weight: 500;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.1s ease-in;
+            user-select: none;
+        }
+
+        .folder-header:hover {
+            background-color: #efefed;
+        }
+
+        .folder-arrow {
+            font-size: 11px;
+            color: #9ca2b0;
+            transition: transform 0.2s ease;
+            display: inline-block;
+        }
+
+        .folder-arrow.open {
+            transform: rotate(90deg);
+        }
+
+        .folder-content {
+            display: none;
+            margin-top: 2px;
+            margin-bottom: 8px;
+        }
+
+        .folder-content.open {
+            display: block;
+        }
+
+        .sub-item {
+            display: block;
+            padding: 6px 14px 6px 34px;
+            font-size: 13.5px;
+            color: #787774;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.1s ease-in;
+            user-select: none;
+            margin-bottom: 2px;
+        }
+
+        .sub-item:hover {
+            background-color: #efefed;
+            color: #37352f;
+        }
+
+        .sub-item.active {
+            background-color: #efefed;
+            color: #37352f;
+            font-weight: 500;
+        }
+
+        /* Main Content Typography */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.2s ease-in-out;
+            padding-bottom: 100px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        h1 {
+            font-size: 36px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+            color: #111827;
+        }
+
+        h2 {
+            font-size: 22px;
+            font-weight: 600;
+            margin-top: 36px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #edece9;
+            padding-bottom: 8px;
+            color: #1f2937;
+        }
+
+        h3 {
+            font-size: 17px;
+            font-weight: 600;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            color: #374151;
+        }
+
+        p {
+            margin-bottom: 16px;
+            line-height: 1.7;
+            color: #37352f;
+            font-size: 15px;
+        }
+
+        /* Notion-style Callouts & Blocks */
+        .callout {
+            display: flex;
+            gap: 14px;
+            padding: 18px;
+            border-radius: 6px;
+            background: #f1f1ef;
+            margin: 24px 0;
+            align-items: flex-start;
+            border-left: 4px solid #d3d1cb;
+        }
+
+        .callout-icon {
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        .callout-content {
+            font-size: 15px;
+            line-height: 1.6;
+            width: 100%;
+            color: #37352f;
+        }
+
+        .callout-content strong {
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .pro-tip {
+            background: #f0fdfa;
+            border-left-color: #0d9488;
+        }
+
+        .warning {
+            background: #fef2f2;
+            border-left-color: #ef4444;
+        }
+
+        .insight {
+            background: #f5f3ff;
+            border-left-color: #8b5cf6;
+        }
+
+        /* Clean Tables */
+        .notion-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            font-size: 14.5px;
+        }
+
+        .notion-table th {
+            background: #f9fafb;
+            font-weight: 600;
+            text-align: left;
+            color: #4b5563;
+        }
+
+        .notion-table th,
+        .notion-table td {
+            border: 1px solid #e5e7eb;
+            padding: 12px 16px;
+            vertical-align: top;
+        }
+
+        .notion-table code {
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #db2777;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 13.5px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #9ca3af;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="h-screen flex flex-col">
+
+    <!-- Top Navigation -->
+    <header
+        class="h-12 border-b border-[#edece9] flex items-center px-4 justify-between shrink-0 bg-white z-10 relative shadow-sm shadow-slate-100/50">
+        <div class="flex items-center gap-3 text-sm font-medium">
+            <span>🚀 LifeOS Docs</span>
+            <span class="text-gray-400">/</span>
+            <span id="breadcrumb-title" class="text-gray-600">Getting started / 1.1 The Psychological Framework</span>
+        </div>
+        <div class="text-xs text-gray-400 font-mono tracking-wider uppercase">v1.0.0 Architecture</div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar w-64 md:w-72 shrink-0 overflow-y-auto py-6 px-2 flex flex-col gap-1">
+            <div class="px-4 mb-3 font-semibold text-[13px] tracking-widest text-gray-400 uppercase">Master Manual</div>
+
+            <nav id="nav-menu">
+
+                <!-- Folder 1 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow open">▶</span><span class="folder-name">Getting
+                            started</span></div>
+                    <div class="folder-content open">
+                        <div class="sub-item active" data-target="u-1-1">1.1 The Psychological Framework</div>
+                        <div class="sub-item" data-target="u-1-2">1.2 The 3 Core Pillars</div>
+                    </div>
+                </div>
+
+                <!-- Folder 2 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow">▶</span><span class="folder-name">Workspace &
+                            sidebar</span></div>
+                    <div class="folder-content">
+                        <div class="sub-item" data-target="u-2-1">2.1 The Dynamic HUD Engines</div>
+                        <div class="sub-item" data-target="u-2-2">2.2 Visual Progression (Gamification)</div>
+                    </div>
+                </div>
+
+                <!-- Folder 3 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow">▶</span><span class="folder-name">Pages &
+                            blocks</span></div>
+                    <div class="folder-content">
+                        <div class="sub-item" data-target="u-3-1">3.1 Power User Block Manipulation</div>
+                        <div class="sub-item" data-target="u-3-2">3.2 The Collision Engine</div>
+                    </div>
+                </div>
+
+                <!-- Folder 4 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow">▶</span><span
+                            class="folder-name">Databases</span></div>
+                    <div class="folder-content">
+                        <div class="sub-item" data-target="u-4-1">4.1 The Three Memory Layers</div>
+                        <div class="sub-item" data-target="u-4-2">4.2 The "Clean Slate" Protocol</div>
+                    </div>
+                </div>
+
+                <!-- Folder 5 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow">▶</span><span class="folder-name">Sharing &
+                            collaboration</span></div>
+                    <div class="folder-content">
+                        <div class="sub-item" data-target="u-5-1">5.1 Universal Knowledge Base</div>
+                    </div>
+                </div>
+
+                <!-- Folder 6 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow">▶</span><span class="folder-name">Data &
+                            integrations</span></div>
+                    <div class="folder-content">
+                        <div class="sub-item" data-target="u-6-1">6.1 The "Sunday Sync" Backup</div>
+                    </div>
+                </div>
+
+                <!-- Folder 7 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow">▶</span><span class="folder-name">Custom
+                            Agents (BYOAI)</span></div>
+                    <div class="folder-content">
+                        <div class="sub-item" data-target="u-7-1">7.1 AI Context Micro-Injections</div>
+                        <div class="sub-item" data-target="u-7-2">7.2 Macro-Extraction (JSON)</div>
+                    </div>
+                </div>
+
+                <!-- Folder 8 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow">▶</span><span
+                            class="folder-name">Automations</span></div>
+                    <div class="folder-content">
+                        <div class="sub-item" data-target="u-8-1">8.1 The Floating Event Bubble</div>
+                        <div class="sub-item" data-target="u-8-2">8.2 The Repeat Math Engine</div>
+                    </div>
+                </div>
+
+                <!-- Folder 9 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow">▶</span><span class="folder-name">Formulas
+                            (Power User)</span></div>
+                    <div class="folder-content">
+                        <div class="sub-item" data-target="u-9-1">9.1 Mouse/Keyboard Modifiers</div>
+                        <div class="sub-item" data-target="u-9-2">9.2 The Identity Predictor Formula</div>
+                    </div>
+                </div>
+
+                <!-- Folder 10 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow">▶</span><span class="folder-name">LifeOS
+                            apps</span></div>
+                    <div class="folder-content">
+                        <div class="sub-item" data-target="u-10-1">10.1 The Three Managers</div>
+                    </div>
+                </div>
+
+                <!-- Folder 11 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow">▶</span><span class="folder-name">Workspace
+                            administration</span></div>
+                    <div class="folder-content">
+                        <div class="sub-item" data-target="u-11-1">11.1 The Layout Router</div>
+                    </div>
+                </div>
+
+                <!-- Folder 12 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow">▶</span><span
+                            class="folder-name">Troubleshooting</span></div>
+                    <div class="folder-content">
+                        <div class="sub-item" data-target="u-12-1">12.1 Collisions & Renaming Errors</div>
+                        <div class="sub-item" data-target="u-12-2">12.2 Orphaned Notes 🔴</div>
+                    </div>
+                </div>
+
+                <!-- Folder 13 -->
+                <div class="folder-group">
+                    <div class="folder-header"><span class="folder-arrow">▶</span><span class="folder-name">Security &
+                            privacy</span></div>
+                    <div class="folder-content">
+                        <div class="sub-item" data-target="u-13-1">13.1 The LocalStorage Threat</div>
+                    </div>
+                </div>
+
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 overflow-y-auto px-8 py-12 md:px-24 md:py-16" id="main-scroll">
+            <div class="max-w-3xl mx-auto">
+
+                <!-- MOD 1.1 -->
+                <section id="u-1-1" class="content-section active">
+                    <h1>1.1 The Psychological Framework</h1>
+                    <p>Welcome to LifeOS. Let’s get one thing straight immediately: <strong>This is not a traditional
+                            calendar.</strong> Traditional calendars are static, lifeless grids that cause "Time
+                        Blindness"—you stare at a wall of text, feel overwhelmed, and ultimately ignore it.</p>
+
+                    <p>LifeOS is a closed-loop, privacy-first <strong>Personal Operating System</strong>. It uses a
+                        concept called <em>Environment Design</em>. The system is engineered to physically alter its
+                        interface to match your current commitment, acting as a digital anchor that forces your mind
+                        into the present moment. You are no longer just scheduling time; you are programming your
+                        environment to command your attention.</p>
+
+                    <div class="callout pro-tip">
+                        <div class="callout-icon">🎯</div>
+                        <div class="callout-content">
+                            <strong>The "Seed Task" Protocol:</strong><br>
+                            Your biggest enemy today is planning fatigue. <strong>Never</strong> attempt to plan your
+                            entire week on day one. You will crash. <br><br>
+                            <strong>Do this instead:</strong> Hit the <code>➕ Nueva Tarea</code> button right now. Add
+                            exactly <em>one</em> thing you are going to do in the next hour (e.g., "Clear Email Inbox").
+                            Set the time. When you finish it, click that block on the calendar to cross it off.
+                            Congratulations, you have just completed your first dopamine loop. Build your schedule block
+                            by block, day by day.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MOD 1.2 -->
+                <section id="u-1-2" class="content-section">
+                    <h1>1.2 The 3 Core Pillars</h1>
+                    <p>To become a master architect of your time, you must first understand the physics of the
+                        environment you are building in. LifeOS operates on three non-negotiable pillars.</p>
+
+                    <table class="notion-table">
+                        <thead>
+                            <tr>
+                                <th>The Pillar</th>
+                                <th>Underlying System Logic</th>
+                                <th>How You Wield It</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1. Time Blocks</strong><br><span
+                                        class="text-xs text-gray-500 font-normal">Your Building Material</span></td>
+                                <td>Tactile DOM Manipulation</td>
+                                <td>You sculpt your week by dragging and resizing blocks. The engine strictly snaps to
+                                    5-minute increments. You stop typing times; you start feeling the physical weight of
+                                    a task by its size on the grid.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>2. Identity Registry</strong><br><span
+                                        class="text-xs text-gray-500 font-normal">The Database Backbone</span></td>
+                                <td>Global <code>localStorage</code> Object</td>
+                                <td>Tasks aren't just empty blocks of time; they have <em>DNA</em>. When you add a
+                                    checklist to "Morning Gym", that text is permanently bound to the <em>name</em>
+                                    "Morning Gym" forever, across all days and layouts.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>3. Visual Anchoring</strong><br><span
+                                        class="text-xs text-gray-500 font-normal">The Pavlovian Trigger</span></td>
+                                <td>CSS HUD Color Shifting</td>
+                                <td>The entire application's background color dynamically morphs based on what task your
+                                    time-line is touching. We are training your brain to associate specific hex colors
+                                    with specific mental states (Deep Work, Rest, Chaos).</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- MOD 2.1 -->
+                <section id="u-2-1" class="content-section">
+                    <h1>2.1 The Dynamic HUD Engines</h1>
+                    <p>Your workspace acts as a Heads Up Display (HUD). Its sole purpose is to ruthlessly eliminate
+                        cognitive load. The UI adapts to your reality, ensuring you only see what is actionable
+                        <em>right now</em>.
+                    </p>
+
+                    <div class="callout insight">
+                        <div class="callout-icon">⏱️</div>
+                        <div class="callout-content">
+                            <strong>Display Offset (Día Inicia): Minimizng Visual Noise</strong><br>
+                            If you wake up at 8:00 AM, seeing empty cells from midnight to 7:59 AM is a mental
+                            distraction. The <code>⚙️ Día Inicia</code> control alters the <code>displayStartMins</code>
+                            variable behind the scenes. It physically slides the entire 1440-minute grid upwards. Set
+                            this to your wake-up time. Your digital day should begin exactly when your biological day
+                            begins.
+                        </div>
+                    </div>
+
+                    <div class="callout warning">
+                        <div class="callout-icon">💓</div>
+                        <div class="callout-content">
+                            <strong>The Pulse Banner: Your Digital Heartbeat</strong><br>
+                            Notice the red horizontal line tracking real-time downwards. When it intersects an active
+                            block, the top banner instantly triggers a <code>dynamic-pulse</code> CSS animation using
+                            that category's specific hex colors. <br><br>
+                            <strong>Why this matters:</strong> If you wander off to YouTube and switch tabs back to
+                            LifeOS, seeing your screen aggressively pulsing in red (Deep Work) acts as a subliminal,
+                            biological trigger to return to your work.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MOD 2.2 -->
+                <section id="u-2-2" class="content-section">
+                    <h1>2.2 Visual Progression (Gamification)</h1>
+                    <p>Productivity requires immediate, undeniable feedback. If you do something hard, you must be
+                        rewarded instantly. LifeOS builds this loop directly into the environment.</p>
+
+                    <p>The HUD features a progress bar that constantly calculates
+                        <code>Completed Tasks / Total Tasks</code> for the current active layout. Clicking a block marks
+                        it complete, immediately advancing the bar. More importantly, the block's opacity drops and it
+                        gets crossed out.
+                    </p>
+
+                    <p><strong>The Concept of "Clearing Space":</strong> As your day progresses, your calendar shouldn't
+                        look fuller; it should look <em>emptier</em>. By dimming completed tasks, your eyes are
+                        naturally drawn only to the bright, solid blocks that still require your energy. You are
+                        literally clearing your mental space.</p>
+                </section>
+
+                <!-- MOD 3.1 -->
+                <section id="u-3-1" class="content-section">
+                    <h1>3.1 Power User Block Manipulation</h1>
+                    <p>Time blocks in LifeOS are not text entries. They are physical objects. Amateurs open the edit
+                        menu to change a task from 10:00 to 11:30. Power users never touch the keyboard; they manipulate
+                        the DOM directly.</p>
+
+                    <table class="notion-table">
+                        <thead>
+                            <tr>
+                                <th>Action</th>
+                                <th>The Mechanics</th>
+                                <th>Technical Behavior</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Move Time/Day</strong></td>
+                                <td><strong>Click & Drag Body</strong></td>
+                                <td>The block detaches and follows your cursor. Drops snap perfectly to
+                                    <code>SNAP_MINS = 5</code> boundaries. You can drag a Tuesday morning block and
+                                    throw it into Friday evening seamlessly.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Stretch Duration</strong></td>
+                                <td><strong>Drag Bottom Handle</strong></td>
+                                <td>Hovering the bottom edge reveals a hidden resize handle. Dragging down extends the
+                                    <code>dur</code> (duration) property natively without opening a single modal.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>Night Shifts</strong></td>
+                                <td><strong>Midnight Ghosting</strong></td>
+                                <td>In other apps, tasks that cross midnight break the UI. Here, if you drag a block
+                                    past the 1440-minute threshold (Midnight), the engine cleanly slices it and projects
+                                    a "Ghost Block" at the top of the <em>next day's</em> column. They act as one
+                                    entity.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- MOD 3.2 -->
+                <section id="u-3-2" class="content-section">
+                    <h1>3.2 The Collision Engine</h1>
+                    <p>In the physical world, two objects cannot occupy the exact same space. Your time is finite, and
+                        LifeOS enforces the physics of time digitally to keep you honest.</p>
+
+                    <div class="callout warning">
+                        <div class="callout-icon">🛑</div>
+                        <div class="callout-content">
+                            <strong>The Blockade (isCollisionAdvanced)</strong><br>
+                            If you attempt to drag a block over a timeframe that is already occupied, the system's
+                            collision engine triggers instantly. The block you are holding will turn a harsh, warning
+                            red.<br><br>
+                            If you release the mouse while it's red, the move is rejected. It bounces back to its
+                            origin. <strong>You cannot double-book time in LifeOS.</strong> You are forced to negotiate
+                            with yourself—if you want to add a new task, you must shorten or delete an existing one.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MOD 4.1 -->
+                <section id="u-4-1" class="content-section">
+                    <h1>4.1 The Three Memory Layers</h1>
+                    <p>To truly master LifeOS, you must realize that your calendar grid is just a front-end view. Behind
+                        the glass, LifeOS operates a relational database connecting tasks, notes, and AI metadata across
+                        three distinct layers of memory.</p>
+
+                    <table class="notion-table">
+                        <thead>
+                            <tr>
+                                <th>Layer</th>
+                                <th>Internal Variable</th>
+                                <th>The Concept</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>1. The Grid</strong></td>
+                                <td><code>calendarState</code></td>
+                                <td><strong>Active Memory.</strong> These are the tasks currently taking up visual space
+                                    and energy in your active week.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>2. 🎒 The Stash</strong></td>
+                                <td><code>taskRegistry</code></td>
+                                <td><strong>Cold Storage.</strong> When you click "Guardar", the task leaves the grid
+                                    but its DNA (duration, category) is saved to the Inventory. Click it later to
+                                    <em>Spawn</em> it back onto the grid without retyping anything.
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><strong>3. 📝 Notes Base</strong></td>
+                                <td><code>savedNotes</code></td>
+                                <td><strong>The Neural Network.</strong> The global text editor. Notes are linked to
+                                    task <em>names</em>. If you add a checklist to a task named "Deep Work", that
+                                    checklist will appear every time you spawn a "Deep Work" block anywhere in the OS.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- MOD 4.2 -->
+                <section id="u-4-2" class="content-section">
+                    <h1>4.2 The "Clean Slate" Protocol</h1>
+                    <p>Let's be realistic: Plans fail. Sometimes a week goes completely off the rails by Wednesday due
+                        to emergencies, sickness, or simple procrastination. You look at a chaotic, missed schedule and
+                        feel paralyzed.</p>
+
+                    <div class="callout pro-tip">
+                        <div class="callout-icon">📦</div>
+                        <div class="callout-content">
+                            <strong>Guardar Todo el Tablero (Stash All): The Psychological Reset</strong><br>
+                            When you are overwhelmed, do not delete tasks one by one. Open the 🎒 Inventory and click
+                            the orange "Guardar Todo" button. <br><br>
+                            This acts as a nuclear reset. It wipes your visual grid completely clean, but safely
+                            migrates every single task into your Inventory. You can then look at your blank week, take a
+                            breath, and "Spawn" only the tasks that matter <em>right now</em>. You declare schedule
+                            bankruptcy without losing a single byte of your data.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MOD 5.1 -->
+                <section id="u-5-1" class="content-section">
+                    <h1>5.1 Universal Knowledge Base</h1>
+                    <p>LifeOS is strictly offline, meaning there is no multi-user sharing. However, the system relies
+                        heavily on a concept called <strong>Cross-Layout Synchronization (Self-Collaboration)</strong>.
+                    </p>
+
+                    <p>Because notes and AI instructions are tied to the <strong>Name</strong> of a task (not the
+                        specific block of time), your layouts constantly collaborate with each other behind the scenes.
+                    </p>
+
+                    <div class="callout insight">
+                        <div class="callout-icon">🧠</div>
+                        <div class="callout-content">
+                            <strong>How Self-Collaboration Works:</strong><br>
+                            Imagine you are in the "Vacation" Layout, and you randomly decide to add a new lifting
+                            routine to a task called "Morning Gym".<br><br>
+                            Two weeks later, you switch back to your "Normal Week" Layout. You click on your usual
+                            Tuesday "Morning Gym" task. Because the <em>Name</em> matches, your new lifting routine is
+                            already inside it. Your knowledge base updates globally and permanently, regardless of your
+                            current time-view.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MOD 6.1 -->
+                <section id="u-6-1" class="content-section">
+                    <h1>6.1 The "Sunday Sync" Backup</h1>
+                    <p>Because LifeOS respects your privacy, there is no corporate cloud database. You own your JSON
+                        file. But with great power comes great responsibility. The <strong>💻 Sync JSON
+                            Terminal</strong> is your gateway to your file system, ensuring you never lose data despite
+                        using a browser-based app.</p>
+
+                    <p>Every Sunday, you must act as your own server administrator. It takes exactly 10 seconds:</p>
+                    <ol class="list-decimal pl-5 space-y-2 mt-2 mb-6">
+                        <li>Click <strong>💻 Sync JSON</strong> to open the Terminal emulator.</li>
+                        <li>Click <strong>📂 Seleccionar Carpeta</strong>. This uses the modern
+                            <code>FileSystem Access API</code> to bridge the browser directly to a physical folder on
+                            your PC.
+                        </li>
+                        <li>Click <strong>💾 System Sync</strong>. The app writes a timestamped
+                            <code>LifeOS_Data_XXX.json</code> file straight to your hard drive.
+                        </li>
+                    </ol>
+
+                    <div class="callout pro-tip">
+                        <div class="callout-icon">🕰️</div>
+                        <div class="callout-content">
+                            <strong>Time Travel (Safety Load):</strong> If you ever destroy your schedule while
+                            experimenting with new routines, open the Terminal and select a JSON file from yesterday.
+                            The system is smart enough to automatically create a safety auto-save of your current
+                            disaster <em>before</em> injecting the past state back into your screen. You can experiment
+                            fearlessly.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MOD 7.1 -->
+                <section id="u-7-1" class="content-section">
+                    <h1>7.1 AI Context Micro-Injections</h1>
+                    <p>LifeOS does not lock you into a proprietary, paid AI subscription. Instead, it features a
+                        <strong>BYOAI (Bring Your Own AI) Engine</strong> that acts as a flawless context-compiler for
+                        whatever LLM you prefer (ChatGPT, Claude, Gemini).
+                    </p>
+
+                    <p>To train an AI to act as a truly personalized coach, you must give it context beyond just "Task
+                        Name: Read". It needs your metadata.</p>
+
+                    <div class="callout insight">
+                        <div class="callout-icon">💉</div>
+                        <div class="callout-content">
+                            <strong>Injecting Metadata:</strong><br>
+                            Open any task and click the <code>ℹ️ Instrucciones AI</code> accordion. Write specific,
+                            brutal instructions for the agent regarding <em>this specific block</em>. <br><br>
+                            <em>Example: "Check if I'm doing this too late in the day, I usually have no energy for deep
+                                reading after 5 PM. Tell me to move it if you see it here."</em><br><br>
+                            When saved, a 🤖 icon will appear on the calendar block indicating hidden metadata is
+                            attached to this timeframe, invisible to you, but waiting for the AI.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MOD 7.2 -->
+                <section id="u-7-2" class="content-section">
+                    <h1>7.2 Macro-Extraction (JSON)</h1>
+                    <p>Once your metadata is injected, you need to extract your human-readable calendar into
+                        machine-readable code. This is where the magic happens.</p>
+
+                    <ul class="list-disc pl-5 mt-4 space-y-2">
+                        <li>Go to <strong>🤖 AI Prompts</strong>.</li>
+                        <li>Select an agent (e.g., "Brutal Coach").</li>
+                        <li>Hit "Ejecutar Prompt".</li>
+                    </ul>
+
+                    <p class="mt-4"><strong>What happens under the hood?</strong> The engine loops through your entire
+                        week, calculates the exact math of your durations, grabs all the 🤖 metadata you hid in your
+                        blocks, and generates a massive, perfectly formatted JSON payload along with your System Prompt.
+                        It silently copies it to your clipboard.</p>
+
+                    <div
+                        class="bg-gray-50 border border-gray-200 rounded p-4 font-mono text-xs text-gray-700 mt-4 overflow-x-auto">
+                        // Example Payload copied to clipboard<br>
+                        === SYSTEM PROMPT ===<br>
+                        Act as a brutal productivity coach...<br>
+                        === MI CALENDARIO: Layout "Normal" (24 tareas) ===<br>
+                        - Lunes | 09:00-11:00 (2h) | [Deep Work] Code Architecture<br>
+                        &nbsp;&nbsp;└─ AI Context: Remind me to take screen breaks.<br>
+                        === DATOS JSON ===<br>
+                        { ... 100 lines of precise data }
+                    </div>
+
+                    <p class="mt-4">Just paste that entire block into ChatGPT and watch it analyze your life with
+                        terrifying accuracy.</p>
+                </section>
+
+                <!-- MOD 8.1 -->
+                <section id="u-8-1" class="content-section">
+                    <h1>8.1 The Floating Event Bubble</h1>
+                    <p>Time blocks are for active work that requires sustained energy and minutes. But what about
+                        non-routine occurrences like "Mom's Birthday", a "Flight to NYC", or "Rent is Due"?</p>
+
+                    <p>If you create a 1-minute time block for these, you will clutter your grid and ruin your
+                        aesthetic. Instead, use <strong>📅 Eventos</strong>.</p>
+
+                    <p>These render as sleek, clickable bubbles at the absolute top of the day columns, hovering safely
+                        above your schedule. They act as "Peripheral Awareness" items—you see them, you know they exist
+                        today, but they don't block your working hours.</p>
+                </section>
+
+                <!-- MOD 8.2 -->
+                <section id="u-8-2" class="content-section">
+                    <h1>8.2 The Repeat Math Engine</h1>
+                    <p>When creating a Special Event, checking the <code>🔄 Repetir evento</code> box activates a
+                        background automation engine that calculates recurrence perfectly.</p>
+
+                    <table class="notion-table">
+                        <thead>
+                            <tr>
+                                <th>Interval Type</th>
+                                <th>The Underlying Math Behavior</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Days</strong></td>
+                                <td>Calculates standard day differences. Injects the bubble every <em>X</em> days
+                                    infinitely across all future weeks.</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Weeks</strong></td>
+                                <td>Calculates a 7-day modulus. Guarantees the event will always land on the exact
+                                    correct weekday (e.g., Every other Friday).</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Months / Years</strong></td>
+                                <td>Bypasses simple day-counting. It uses Date object comparisons (e.g., "Is it the 12th
+                                    of the month?") to ensure leap years and 31-day months never desync your bills or
+                                    anniversaries.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- MOD 9.1 -->
+                <section id="u-9-1" class="content-section">
+                    <h1>9.1 Mouse/Keyboard Modifiers</h1>
+                    <p>To truly reach "Power User" status, you must bypass the UI menus and control the OS at lightning
+                        speed using your keyboard modifiers.</p>
+
+                    <table class="notion-table">
+                        <thead>
+                            <tr>
+                                <th>The Trigger</th>
+                                <th>The Action</th>
+                                <th>The Tactical Result</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>Click + Drag</code><br><span class="text-xs text-gray-500">(On empty
+                                        space)</span></td>
+                                <td><strong>Marquee Selection</strong></td>
+                                <td>Draws a translucent blue boundary box. Everything touched is captured into a group.
+                                    When you drag one, you drag them all. The Collision Engine is smart enough to check
+                                    the <em>entire group's</em> footprint before allowing a drop.</td>
+                            </tr>
+                            <tr>
+                                <td><code>Alt / Option + Drag</code><br><span class="text-xs text-gray-500">(While
+                                        holding a task)</span></td>
+                                <td><strong>Ninja Clone</strong></td>
+                                <td>Holding <code>Alt</code> changes the physics of the drag. The original blocks lock
+                                    in place and fade to 40% opacity (Ghosts), while your cursor pulls a perfect clone.
+                                    When you release, the system generates brand new, unique IDs and duplicates the
+                                    tasks instantly.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- MOD 9.2 -->
+                <section id="u-9-2" class="content-section">
+                    <h1>9.2 The Identity Predictor Formula</h1>
+                    <p>Because tasks share global notes based on their <em>Name</em>, renaming a task is a highly
+                        destructive or constructive action. When renaming a task in the editor, look at the tiny text
+                        directly below the input field.</p>
+
+                    <p>The algorithm runs a real-time regex check against your entire database to predict how your
+                        change will alter the data graph. Learn these symbols:</p>
+
+                    <table class="notion-table">
+                        <thead>
+                            <tr>
+                                <th>Icon</th>
+                                <th>Formula Logic</th>
+                                <th>What Happens to the Data?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="text-lg">✨</span></td>
+                                <td><code>Not in DB</code></td>
+                                <td>Creates a brand new task identity from scratch. No shared notes.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="text-lg">🔗</span></td>
+                                <td><code>In DB + Local Edit</code></td>
+                                <td>FUSION. This block merges into an existing group, instantly inheriting its global
+                                    notes and AI metadata.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="text-lg">✂️</span></td>
+                                <td><code>Local Edit</code></td>
+                                <td>SEPARATION. Separates this specific block from its original group, making it unique
+                                    and leaving the others behind.</td>
+                            </tr>
+                            <tr>
+                                <td><span class="text-lg">🌍</span></td>
+                                <td><code>Global Checkbox = True</code></td>
+                                <td>MUTATION. Mutates <strong>all</strong> instances of this task across every layout
+                                    simultaneously. Massive global change.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </section>
+
+                <!-- MOD 10.1 -->
+                <section id="u-10-1" class="content-section">
+                    <h1>10.1 The Three Managers</h1>
+                    <p>LifeOS contains internal "Apps" (Managers) to handle massive datasets cleanly without ruining
+                        your minimalist calendar view. Think of them as the control panels of a ship.</p>
+
+                    <ul class="list-none space-y-4 mt-4">
+                        <li class="p-5 border border-[#edece9] rounded-lg bg-[#fafafa]">
+                            <strong class="text-indigo-600 flex items-center gap-2 mb-2 text-lg">📝 Notes
+                                Manager</strong>
+                            A dual-pane IDE for your life's knowledge. It scans your entire database and sorts notes
+                            into <strong>Active (🟢)</strong> (currently living on a layout) and <strong>Orphaned
+                                (🔴)</strong> (blocks you deleted but the note survived). Use this once a month to prune
+                            dead notes without touching your calendar.
+                        </li>
+                        <li class="p-5 border border-[#edece9] rounded-lg bg-[#fafafa]">
+                            <strong class="text-indigo-600 flex items-center gap-2 mb-2 text-lg">🤖 Prompt
+                                Manager</strong>
+                            A code editor to write custom System Prompts (like "Act as a brutal coach" or "Optimize my
+                            sleep schedule"). These prompts will be automatically wrapped around your calendar JSON
+                            during export.
+                        </li>
+                        <li class="p-5 border border-[#edece9] rounded-lg bg-[#fafafa]">
+                            <strong class="text-indigo-600 flex items-center gap-2 mb-2 text-lg">🎒 Inventory
+                                Manager</strong>
+                            A visual grid of all your stashed task blocks, showing their default duration and category.
+                            Click any item to spawn it into the current day. It's your personal deck of habit-cards.
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- MOD 11.1 -->
+                <section id="u-11-1" class="content-section">
+                    <h1>11.1 The Layout Router</h1>
+                    <p>Life is not monolithic. Your routine during exams is not your routine during summer. Layouts
+                        allow you to maintain parallel universes of your schedule.</p>
+
+                    <p>You can <strong>Create (+), Duplicate (📄), Rename (✏️), or Delete (🗑️)</strong> layouts from
+                        the top dropdown control panel. Switching between them is instantaneous and requires no page
+                        reloads.</p>
+
+                    <div class="callout warning">
+                        <div class="callout-icon">⚠️</div>
+                        <div class="callout-content">
+                            <strong>The Law of Global Context Preservation:</strong><br>
+                            When you switch Layouts, your calendar grid empties, but your <strong>Inventory and Notes
+                                remain identical</strong>. Layouts only change <em>when</em> tasks happen, not
+                            <em>what</em> they are. <br><br>
+                            If you delete a note for "Cardio" in your "Vacation" layout, you have deleted it globally.
+                            It will be gone when you switch back to your "Normal Week" layout.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MOD 12.1 -->
+                <section id="u-12-1" class="content-section">
+                    <h1>12.1 Collisions & Renaming Errors</h1>
+
+                    <h3 class="mt-8 text-red-600">Why did my block turn bright red and bounce back?</h3>
+                    <p>The <strong>Collision Detection Engine</strong> intervened. You cannot place a task on top of
+                        another task. Either the destination time is fully blocked, or you are overlapping by just a few
+                        minutes. Make space first, or use the bottom resize handle on the existing task to shrink it and
+                        allow the new one to fit.</p>
+
+                    <h3 class="mt-8 text-red-600">Why did Global Rename (🌍) throw a red error?</h3>
+                    <p>You tried to globally rename a task like "Running" to "Gym", but "Gym" <em>already exists</em>
+                        somewhere in your database. The system actively blocks global merges to prevent you from
+                        accidentally overwriting your old "Gym" notes with your "Running" notes. Uncheck the global box
+                        to simply move that specific block to the Gym category.</p>
+                </section>
+
+                <!-- MOD 12.2 -->
+                <section id="u-12-2" class="content-section">
+                    <h1>12.2 Orphaned Notes 🔴</h1>
+
+                    <h3 class="mt-8 text-red-600">Why is my note marked as "Orphaned" in the Notes Manager?</h3>
+                    <p>You deleted the task from your active calendar, or you stashed it in the Inventory. The note
+                        still exists safely in the global database, but since no active block on the grid is currently
+                        using that name to display it, it is flagged as orphaned. It is completely safe to leave it
+                        there. If you spawn the task again next month, the note will instantly reconnect and turn green
+                        (Active).</p>
+
+                    <div class="callout warning">
+                        <div class="callout-icon">⚠️</div>
+                        <div class="callout-content">
+                            <strong>15-Note Limit (FIFO Pruning):</strong><br>
+                            To save system resources, LifeOS enforces a hard limit of 15 orphaned notes. When this limit
+                            is exceeded, the oldest unused notes will be automatically and permanently deleted from the
+                            database.
+                        </div>
+                    </div>
+                </section>
+
+                <!-- MOD 13.1 -->
+                <section id="u-13-1" class="content-section">
+                    <h1>13.1 App Storage Limits</h1>
+                    <p>LifeOS operates on a zero-trust, absolute sovereignty architecture. It has no backend server, no
+                        corporate cloud, and no accounts.</p>
+
+                    <div class="callout warning">
+                        <div class="callout-icon">🚨</div>
+                        <div class="callout-content">
+                            <strong>The Threat Vector:</strong><br>
+                            All your data is stored in your browser's IndexedDB database. While IndexedDB handles much
+                            larger quotas seamlessly, it is still vulnerable to user actions.<br><br>
+                            <strong>If you clear your cache, run a system cleaner (like CCleaner or CleanMyMac), or use
+                                Incognito mode, your LifeOS database will be deleted permanently and
+                                irreversibly.</strong> There is no "forgot password" or cloud recovery.
+                        </div>
+                    </div>
+
+                    <p><strong>The Solution & Monitoring:</strong> The main HUD now features a visual <strong>Storage
+                            Gauge</strong> indicating that IndexedDB is active. You must
+                        familiarize yourself with Section 6.1 (The "Sunday Sync") and use the built-in terminal to
+                        download your JSON payload directly to your physical hard drive regularly to ensure survival.
+                    </p>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Interactive Routing Logic -->
+    <script>
+        const folderHeaders = document.querySelectorAll('.folder-header');
+        const subItems = document.querySelectorAll('.sub-item');
+        const contentSections = document.querySelectorAll('.content-section');
+        const breadcrumb = document.getElementById('breadcrumb-title');
+        const mainScroll = document.getElementById('main-scroll');
+
+        // Folder Toggle Logic
+        folderHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const arrow = header.querySelector('.folder-arrow');
+                content.classList.toggle('open');
+                arrow.classList.toggle('open');
+            });
+        });
+
+        // Navigation Logic
+        subItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // 1. Remove active state from all
+                subItems.forEach(i => i.classList.remove('active'));
+                contentSections.forEach(c => c.classList.remove('active'));
+
+                // 2. Add active state to clicked
+                item.classList.add('active');
+                const targetId = item.getAttribute('data-target');
+                document.getElementById(targetId).classList.add('active');
+
+                // 3. Update Breadcrumb
+                const folderName = item.closest('.folder-group').querySelector('.folder-name').innerText;
+                const itemName = item.innerText;
+                breadcrumb.innerText = `${folderName} / ${itemName}`;
+
+                // 4. Scroll to top
+                mainScroll.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+
+</html>
