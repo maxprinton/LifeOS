@@ -3304,6 +3304,10 @@
             renderCalendar();
         }
 
+        // --- INIT QUILL EDITORS ---
+        const modalQuill = new Quill('#modal-note-editor', { theme: 'snow', modules: { toolbar: [['bold', 'italic', 'underline', 'strike'], ['blockquote', 'code-block'], [{ 'header': 1 }, { 'header': 2 }], [{ 'list': 'ordered' }, { 'list': 'bullet' }], [{ 'color': [] }, { 'background': [] }], ['clean']] } });
+        const nmQuill = new Quill('#nm-editor-text', { theme: 'snow', modules: { toolbar: [['bold', 'italic', 'underline', 'strike'], ['blockquote', 'code-block'], [{ 'header': 1 }, { 'header': 2 }], [{ 'list': 'ordered' }, { 'list': 'bullet' }], [{ 'color': [] }, { 'background': [] }], ['clean']] } });
+
         // Initialize application via async bootloader
         bootloader();
     </script>
