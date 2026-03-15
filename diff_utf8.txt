@@ -1,0 +1,586 @@
+﻿diff --git a/LifeOS v2.0-CoC.html b/LifeOS v2.0-CoC.html.bak
+index 86daf35..014c663 100644
+--- a/LifeOS v2.0-CoC.html	
++++ b/LifeOS v2.0-CoC.html.bak	
+@@ -1217,55 +1217,61 @@
+ 
+ <body>
+ 
+-
+-
+-    <h1 id="main-header">­ƒÜÇ LifeOS v2.0-CoC</h1>
+-    <div id="current-task-banner" class="current-task-banner">
+-        <span>Tarea Actual:</span> <span id="current-task-name">Tiempo Libre /
+-            Descanso</span>
+-    </div>
+-    <div class="progress-container">
+-        <div class="progress-bar" id="progress-bar-fill"></div>
+-        <span class="progress-text" id="progress-text">0% Completado (0/0)</span>
++    <div class="lang-picker">
++        <button class="lang-btn active-lang-btn" data-lang="en">­ƒç║­ƒç© EN</button>
++        <button class="lang-btn" data-lang="es">­ƒç▓­ƒç¢ ES</button>
++        <button class="lang-btn" data-lang="pt">­ƒçº­ƒçÀ PT</button>
+     </div>
+ 
+-    <div class="legend" id="dynamic-legend"></div>
+-
+-    <div class="controls">
+-        <div class="display-settings">
+-            <label>­ƒù║´©Å Layout:</label>
+-            <select id="layout-selector" style="max-width: 120px;"></select>
+-            <button id="new-layout-btn"
+-                style="background:none;border:none;cursor:pointer;color:#2ecc71;font-weight:bold;font-size:1.1rem; margin-left: 2px;"
+-                title="Crear Nuevo Layout">+</button>
+-            <button id="duplicate-layout-btn"
+-                style="background:none;border:none;cursor:pointer;color:#3498db;font-size:1rem; margin-left: 2px;"
+-                title="Duplicar Layout">­ƒôä</button>
+-            <button id="rename-layout-btn"
+-                style="background:none;border:none;cursor:pointer;color:#f39c12;font-size:1rem; margin-left: 2px;"
+-                title="Renombrar Layout">Ô£Å´©Å</button>
+-            <button id="delete-layout-btn"
+-                style="background:none;border:none;cursor:pointer;color:#e74c3c;font-size:1rem; margin-left: 2px;"
+-                title="Eliminar Layout">­ƒùæ´©Å</button>
++    <div class="header" id="main-header">
++        <h1 data-i18n="app_title">­ƒÜÇ LifeOS</h1>
++        <div id="current-task-banner" class="current-task-banner">
++            <span data-i18n="current_task_label">Tarea Actual:</span> <span id="current-task-name">Tiempo Libre /
++                Descanso</span>
+         </div>
+-        <div class="display-settings">
+-            <label for="display-start-input">ÔÜÖ´©Å D├¡a Inicia:</label>
+-            <input type="time" id="display-start-input" title="Desliza el horario visual">
++        <div class="progress-container">
++            <div class="progress-bar" id="progress-bar-fill"></div>
++            <span class="progress-text" id="progress-text">0% Completado (0/0)</span>
++        </div>
++
++        <div class="legend" id="dynamic-legend"></div>
++
++        <div class="controls">
++            <div class="display-settings">
++                <label data-i18n="layout_label">­ƒù║´©Å Layout:</label>
++                <select id="layout-selector" style="max-width: 120px;"></select>
++                <button id="new-layout-btn"
++                    style="background:none;border:none;cursor:pointer;color:#2ecc71;font-weight:bold;font-size:1.1rem; margin-left: 2px;"
++                    title="Crear Nuevo Layout">+</button>
++                <button id="duplicate-layout-btn"
++                    style="background:none;border:none;cursor:pointer;color:#3498db;font-size:1rem; margin-left: 2px;"
++                    title="Duplicar Layout">­ƒôä</button>
++                <button id="rename-layout-btn"
++                    style="background:none;border:none;cursor:pointer;color:#f39c12;font-size:1rem; margin-left: 2px;"
++                    title="Renombrar Layout">Ô£Å´©Å</button>
++                <button id="delete-layout-btn"
++                    style="background:none;border:none;cursor:pointer;color:#e74c3c;font-size:1rem; margin-left: 2px;"
++                    title="Eliminar Layout">­ƒùæ´©Å</button>
++            </div>
++            <div class="display-settings">
++                <label for="display-start-input" data-i18n="day_start_label">ÔÜÖ´©Å D├¡a Inicia:</label>
++                <input type="time" id="display-start-input" title="Desliza el horario visual">
++            </div>
++            <button class="btn btn-inventory" id="inventory-btn" data-i18n="btn_inventory">­ƒÄÆ Inventario</button>
++            <button class="btn btn-legends" id="edit-legends-btn" data-i18n="btn_categories">­ƒÅÀ´©Å Categor├¡as</button>
++            <button class="btn btn-events" id="events-btn" data-i18n="btn_events">­ƒôà Eventos</button>
++            <button class="btn btn-notes" id="notes-manager-btn" data-i18n="btn_notes">­ƒôØ Base de Notas</button>
++            <button class="btn btn-ai" id="prompts-btn" data-i18n="btn_prompts">­ƒñû AI Prompts</button>
++            <button class="btn btn-new" id="new-task-btn" data-i18n="btn_new_task">Ô×ò Nueva Tarea</button>
++            <button class="btn btn-reset" id="reset-btn" data-i18n="btn_reset">­ƒöä Reiniciar</button>
++            <span id="storage-meter"
++                style="font-size: 0.8rem; font-weight: bold; color: #7f8c8d; margin-left: 10px; margin-right: 10px;">Storage:
++                0%</span>
++            <button class="btn btn-terminal" id="terminal-btn" data-i18n="btn_sync">­ƒÆ╗ Sync JSON</button>
++            <button class="btn btn-docs" id="docs-btn" onclick="window.open('LifeOS Reference Docs.html', '_blank')"
++                data-i18n="btn_docs">­ƒôÜ
++                Docs</button>
+         </div>
+-        <button class="btn btn-inventory" id="inventory-btn">­ƒÄÆ Inventario</button>
+-        <button class="btn btn-legends" id="edit-legends-btn">­ƒÅÀ´©Å Categor├¡as</button>
+-        <button class="btn btn-events" id="events-btn">­ƒôà Eventos</button>
+-        <button class="btn btn-notes" id="notes-manager-btn">­ƒôØ Base de Notas</button>
+-        <button class="btn btn-ai" id="prompts-btn">­ƒñû AI Prompts</button>
+-        <button class="btn btn-new" id="new-task-btn">Ô×ò Nueva Tarea</button>
+-        <button class="btn btn-reset" id="reset-btn">­ƒöä Reiniciar</button>
+-        <span id="storage-meter"
+-            style="font-size: 0.8rem; font-weight: bold; color: #7f8c8d; margin-left: 10px; margin-right: 10px;">Storage:
+-            0%</span>
+-        <button class="btn btn-terminal" id="terminal-btn">­ƒÆ╗ Sync JSON</button>
+-        <button class="btn btn-docs" id="docs-btn" onclick="window.open('LifeOS Reference Docs.html', '_blank')">­ƒôÜ
+-            Docs</button>
+-    </div>
+     </div>
+ 
+     <div id="selection-marquee" class="selection-marquee"></div>
+@@ -1297,16 +1303,19 @@
+     <!-- New Layout Modal -->
+     <div id="new-layout-modal" class="modal-overlay">
+         <div class="modal-content">
+-            <h3 style="margin-bottom: 15px;">­ƒù║´©Å Crear Nuevo Layout</h3>
++            <h3 style="margin-bottom: 15px;" data-i18n="modal_new_layout_title">­ƒù║´©Å Crear Nuevo Layout</h3>
+             <div class="form-group">
+-                <label>Nombre del Layout</label>
+-                <input type="text" id="new-layout-name-input" placeholder="Ej. Vacaciones, Semana B...">
++                <label data-i18n="modal_new_layout_label">Nombre del Layout</label>
++                <input type="text" id="new-layout-name-input" placeholder="Ej. Vacaciones, Semana B..."
++                    data-i18n="modal_new_layout_placeholder">
+             </div>
+             <div class="modal-actions">
+                 <button id="new-layout-cancel" class="btn-cancel"
+-                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">Cancelar</button>
++                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;"
++                    data-i18n="btn_cancel">Cancelar</button>
+                 <button id="new-layout-save"
+-                    style="background: #2ecc71; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;">Crear
++                    style="background: #2ecc71; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;"
++                    data-i18n="btn_create_layout">Crear
+                     Layout</button>
+             </div>
+         </div>
+@@ -1315,16 +1324,19 @@
+     <!-- Duplicate Layout Modal -->
+     <div id="duplicate-layout-modal" class="modal-overlay">
+         <div class="modal-content">
+-            <h3 style="margin-bottom: 15px;">­ƒôä Duplicar Layout</h3>
++            <h3 style="margin-bottom: 15px;" data-i18n="modal_dup_layout_title">­ƒôä Duplicar Layout</h3>
+             <div class="form-group">
+-                <label><span>Nombre de la copia de</span> "<span id="duplicate-layout-current"></span>"</label>
++                <label><span data-i18n="modal_dup_layout_label">Nombre de la copia de</span> "<span
++                        id="duplicate-layout-current"></span>"</label>
+                 <input type="text" id="duplicate-layout-name-input">
+             </div>
+             <div class="modal-actions">
+                 <button id="duplicate-layout-cancel" class="btn-cancel"
+-                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">Cancelar</button>
++                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;"
++                    data-i18n="btn_cancel">Cancelar</button>
+                 <button id="duplicate-layout-save"
+-                    style="background: #3498db; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;">Duplicar</button>
++                    style="background: #3498db; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;"
++                    data-i18n="btn_duplicate_layout">Duplicar</button>
+             </div>
+         </div>
+     </div>
+@@ -1332,16 +1344,19 @@
+     <!-- Rename Layout Modal -->
+     <div id="rename-layout-modal" class="modal-overlay">
+         <div class="modal-content">
+-            <h3 style="margin-bottom: 15px;">Ô£Å´©Å Renombrar Layout</h3>
++            <h3 style="margin-bottom: 15px;" data-i18n="modal_ren_layout_title">Ô£Å´©Å Renombrar Layout</h3>
+             <div class="form-group">
+-                <label><span>Nuevo Nombre para</span> "<span id="rename-layout-current"></span>"</label>
++                <label><span data-i18n="modal_ren_layout_label">Nuevo Nombre para</span> "<span
++                        id="rename-layout-current"></span>"</label>
+                 <input type="text" id="rename-layout-name-input">
+             </div>
+             <div class="modal-actions">
+                 <button id="rename-layout-cancel" class="btn-cancel"
+-                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">Cancelar</button>
++                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;"
++                    data-i18n="btn_cancel">Cancelar</button>
+                 <button id="rename-layout-save"
+-                    style="background: #f39c12; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;">Renombrar</button>
++                    style="background: #f39c12; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;"
++                    data-i18n="btn_rename_layout">Renombrar</button>
+             </div>
+         </div>
+     </div>
+@@ -1349,15 +1364,18 @@
+     <!-- Delete Layout Confirm Modal -->
+     <div id="delete-layout-confirm-modal" class="modal-overlay">
+         <div class="modal-content">
+-            <h3>Confirmar Eliminaci├│n</h3>
+-            <p style="margin: 15px 0; color: #e74c3c; font-weight: bold;"><span>┬┐Eliminar el layout</span> "<span
+-                    id="delete-layout-target"></span>"? <span>Esta acci├│n es
++            <h3 data-i18n="modal_del_layout_title">Confirmar Eliminaci├│n</h3>
++            <p style="margin: 15px 0; color: #e74c3c; font-weight: bold;"><span
++                    data-i18n="modal_del_layout_label">┬┐Eliminar el layout</span> "<span
++                    id="delete-layout-target"></span>"? <span data-i18n="modal_del_layout_warning">Esta acci├│n es
+                     irreversible.</span></p>
+             <div class="modal-actions">
+                 <button id="delete-layout-confirm-cancel" class="btn-cancel"
+-                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">Cancelar</button>
++                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;"
++                    data-i18n="btn_cancel">Cancelar</button>
+                 <button id="delete-layout-confirm-yes"
+-                    style="background: #e74c3c; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer;">Eliminar</button>
++                    style="background: #e74c3c; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer;"
++                    data-i18n="btn_delete_layout">Eliminar</button>
+             </div>
+         </div>
+     </div>
+@@ -1365,18 +1383,20 @@
+     <!-- Stash All Confirm Modal -->
+     <div id="stash-all-confirm-modal" class="modal-overlay">
+         <div class="modal-content">
+-            <h3>­ƒôª Guardar Todo en el Inventario</h3>
+-            <p style="margin: 15px 0; color: #d35400; font-weight: bold;">┬┐Est├ís
++            <h3 data-i18n="modal_stash_all_title">­ƒôª Guardar Todo en el Inventario</h3>
++            <p style="margin: 15px 0; color: #d35400; font-weight: bold;" data-i18n="modal_stash_all_prompt">┬┐Est├ís
+                 seguro de que deseas vaciar tu
+                 calendario actual y mover todas las tareas al inventario?</p>
+-            <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;">Esta
++            <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;" data-i18n="modal_stash_all_desc">Esta
+                 acci├│n vaciar├í el layout actual por
+                 completo y no se puede deshacer de golpe. Tus tareas y notas estar├ín a salvo en el inventario.</p>
+             <div class="modal-actions">
+                 <button id="stash-all-confirm-cancel" class="btn-cancel"
+-                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">Cancelar</button>
++                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;"
++                    data-i18n="btn_cancel">Cancelar</button>
+                 <button id="stash-all-confirm-yes"
+-                    style="background: #d35400; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;">S├¡,
++                    style="background: #d35400; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;"
++                    data-i18n="btn_stash_all_confirm">S├¡,
+                     Guardar Todo</button>
+             </div>
+         </div>
+@@ -1386,15 +1406,16 @@
+     <div id="inventory-modal" class="modal-overlay">
+         <div class="modal-content" style="width: 600px; max-width: 95%;">
+             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+-                <h3 style="margin: 0;"><span>­ƒÄÆ Inventario de Tareas</span> <a href="LifeOS Reference Docs.html#u-4-1"
+-                        target="_blank" title="Docs 4.1: The Three Memory Layers, 4.2: The Clean Slate Protocol"
++                <h3 style="margin: 0;"><span data-i18n="modal_inv_title">­ƒÄÆ Inventario de Tareas</span> <a
++                        href="LifeOS Reference Docs.html#u-4-1" target="_blank"
++                        title="Docs 4.1: The Three Memory Layers, 4.2: The Clean Slate Protocol"
+                         style="text-decoration: none; cursor: help;">ÔØô</a></h3>
+                 <button id="stash-all-btn"
+                     style="background: #d35400; color: white; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 0.8rem;"
+-                    title="Quitar todas las tareas de la semana actual">­ƒôª Guardar Todo el
++                    title="Quitar todas las tareas de la semana actual" data-i18n="btn_stash_all">­ƒôª Guardar Todo el
+                     Tablero</button>
+             </div>
+-            <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;">Haz clic en una
++            <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;" data-i18n="modal_inv_desc">Haz clic en una
+                 tarea para colocarla en tu
+                 calendario actual. Te pediremos que elijas el d├¡a y la hora.</p>
+ 
+@@ -1404,7 +1425,8 @@
+ 
+             <div class="modal-actions" style="margin-top: 20px;">
+                 <button id="inventory-close" class="btn-cancel"
+-                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; background: #eee; font-weight: bold; width: 100%;">Cerrar
++                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; background: #eee; font-weight: bold; width: 100%;"
++                    data-i18n="btn_close_inv">Cerrar
+                     Inventario</button>
+             </div>
+         </div>
+@@ -1413,12 +1435,12 @@
+     <!-- Task Editor Modal -->
+     <div id="note-modal" class="modal-overlay">
+         <div class="modal-content" style="width: 500px; max-height: 90vh; overflow-y: auto;">
+-            <h3 id="modal-main-title" style="margin-bottom: 15px;">Editar Tarea</h3>
++            <h3 id="modal-main-title" style="margin-bottom: 15px;" data-i18n="modal_task_title">Editar Tarea</h3>
+             <input type="hidden" id="modal-task-id">
+             <input type="hidden" id="modal-task-original-day">
+ 
+             <div class="form-group">
+-                <label>Nombre de la Tarea</label>
++                <label data-i18n="modal_task_name_label">Nombre de la Tarea</label>
+                 <input type="text" id="modal-task-name">
+                 <a href="LifeOS Reference Docs.html#u-9-2" target="_blank"
+                     title="Docs 9.2: The Identity Predictor Formula"
+@@ -1429,7 +1451,7 @@
+                     <label
+                         style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #d35400; font-size: 0.85rem;">
+                         <input type="checkbox" id="global-rename-checkbox">
+-                        <strong>­ƒîì Renombrar globalmente (en todos los
++                        <strong data-i18n="modal_task_rename_global">­ƒîì Renombrar globalmente (en todos los
+                             layouts)</strong>
+                     </label>
+                 </div>
+@@ -1437,36 +1459,39 @@
+ 
+             <div class="form-group" style="display: flex; gap: 10px;">
+                 <div style="flex: 1;">
+-                    <label>D├¡a</label>
++                    <label data-i18n="modal_task_day_label">D├¡a</label>
+                     <select id="modal-task-day">
+-                        <option value="0">Lunes</option>
+-                        <option value="1">Martes</option>
+-                        <option value="2">Mi├®rcoles</option>
+-                        <option value="3">Jueves</option>
+-                        <option value="4">Viernes</option>
+-                        <option value="5">S├íbado</option>
+-                        <option value="6">Domingo</option>
++                        <option value="0" data-i18n="day_mon">Lunes</option>
++                        <option value="1" data-i18n="day_tue">Martes</option>
++                        <option value="2" data-i18n="day_wed">Mi├®rcoles</option>
++                        <option value="3" data-i18n="day_thu">Jueves</option>
++                        <option value="4" data-i18n="day_fri">Viernes</option>
++                        <option value="5" data-i18n="day_sat">S├íbado</option>
++                        <option value="6" data-i18n="day_sun">Domingo</option>
+                     </select>
+                 </div>
+                 <div style="flex: 1;">
+-                    <label>Categor├¡a</label>
++                    <label data-i18n="modal_task_cat_label">Categor├¡a</label>
+                     <select id="modal-task-type"></select>
+                 </div>
+             </div>
+ 
+             <div class="form-group" style="display: flex; gap: 10px;">
+-                <div style="flex: 1;"><label>Inicio</label><input type="time" id="modal-start-time"></div>
+-                <div style="flex: 1;"><label>Fin</label><input type="time" id="modal-end-time"></div>
++                <div style="flex: 1;"><label data-i18n="modal_task_start_label">Inicio</label><input type="time"
++                        id="modal-start-time"></div>
++                <div style="flex: 1;"><label data-i18n="modal_task_end_label">Fin</label><input type="time"
++                        id="modal-end-time"></div>
+             </div>
+             <div class="form-group">
+-                <label>Notas (Globales, compartidas por nombre)</label>
++                <label data-i18n="modal_task_notes_label">Notas (Globales, compartidas por nombre)</label>
+                 <div id="modal-quill-editor" style="height: 150px;"></div>
+             </div>
+             <div class="form-group">
+                 <div id="ai-instructions-toggle"
+                     style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 0;">
+                     <span style="font-size: 1rem;">Ôä╣´©Å</span>
+-                    <span style="font-weight: bold; color: #6c5ce7; font-size: 0.85rem;">Instrucciones AI (Metadata para
++                    <span style="font-weight: bold; color: #6c5ce7; font-size: 0.85rem;"
++                        data-i18n="modal_task_ai_label">Instrucciones AI (Metadata para
+                         el BYOAI Engine)</span>
+                     <span id="ai-toggle-arrow"
+                         style="font-size: 0.7rem; color: #999; transition: transform 0.2s;">ÔûÂ</span>
+@@ -1477,7 +1502,7 @@
+                     <textarea id="modal-ai-instructions" rows="3"
+                         placeholder="Instrucciones espec├¡ficas para la IA sobre esta tarea. Ej: 'Enf├│cate en analizar si estoy dedicando suficiente tiempo a este bloque de deep work.'"
+                         style="width: 100%; padding: 8px; border: 2px solid #6c5ce7; border-radius: 6px; outline: none; font-family: 'Consolas', monospace; font-size: 0.85rem; resize: vertical; background: #f8f5ff;"></textarea>
+-                    <div style="font-size: 0.75rem; color: #7f8c8d; margin-top: 4px;">­ƒÆí
++                    <div style="font-size: 0.75rem; color: #7f8c8d; margin-top: 4px;" data-i18n="modal_task_ai_desc">­ƒÆí
+                         Este texto se adjunta
+                         autom├íticamente al ejecutar un prompt desde el AI Manager.</div>
+                 </div>
+@@ -1486,16 +1511,20 @@
+                 style="color: red; display: none; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold;"></div>
+ 
+             <div class="modal-actions">
+-                <button id="modal-stash" class="btn-stash-task" title="Quitar del calendario y enviar al inventario">­ƒÄÆ
++                <button id="modal-stash" class="btn-stash-task" title="Quitar del calendario y enviar al inventario"
++                    data-i18n="btn_stash_task">­ƒÄÆ
+                     Guardar</button>
+-                <button id="modal-delete" class="btn-delete-task"
+-                    title="Eliminar del calendario (No borra la nota)">­ƒùæ´©Å</button>
++                <button id="modal-delete" class="btn-delete-task" title="Eliminar del calendario (No borra la nota)"
++                    data-i18n="btn_delete_task">­ƒùæ´©Å</button>
+                 <button id="modal-duplicate" class="btn"
+-                    style="background: #9b59b6; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; display: none;">Duplicar</button>
++                    style="background: #9b59b6; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; display: none;"
++                    data-i18n="btn_duplicate_task">Duplicar</button>
+                 <button id="modal-cancel" class="btn-cancel"
+-                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">Cancelar</button>
++                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;"
++                    data-i18n="btn_cancel">Cancelar</button>
+                 <button id="modal-save"
+-                    style="background: #2ecc71; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">Guardar</button>
++                    style="background: #2ecc71; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
++                    data-i18n="btn_save">Guardar</button>
+             </div>
+         </div>
+     </div>
+@@ -1504,17 +1533,15 @@
+     <div id="notes-manager-modal" class="modal-overlay">
+         <div class="modal-content" style="width: 850px; max-width: 95%;">
+             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+-                <h3 style="margin: 0;">­ƒôØ Base de Notas</h3>
++                <h3 style="margin: 0;" data-i18n="btn_notes">­ƒôØ Base de Notas</h3>
+             </div>
+             <div class="pm-layout">
+                 <div class="pm-list-container">
+-                    <h4
+-                        style="font-size: 0.85rem; color: #2ecc71; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px;">
+-                        Ô£à Activas</h4>
++                    <h4 style="font-size: 0.85rem; color: #2ecc71; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px;"
++                        data-i18n="nm_active_title">Ô£à Activas</h4>
+                     <div class="pm-list" id="nm-active-list"></div>
+-                    <h4
+-                        style="font-size: 0.85rem; color: #e74c3c; margin-bottom: 8px; margin-top: 12px; border-bottom: 1px solid #eee; padding-bottom: 4px;">
+-                        ­ƒôª Archivadas</h4>
++                    <h4 style="font-size: 0.85rem; color: #e74c3c; margin-bottom: 8px; margin-top: 12px; border-bottom: 1px solid #eee; padding-bottom: 4px;"
++                        data-i18n="nm_orphaned_title">­ƒôª Archivadas</h4>
+                     <div class="pm-list" id="nm-orphaned-list"></div>
+                 </div>
+                 <div class="pm-editor" id="nm-editor-panel" style="visibility: hidden;">
+@@ -1527,15 +1554,17 @@
+                     </div>
+                     <div id="nm-quill-editor" style="height: 200px;"></div>
+                     <div class="modal-actions" style="margin-top: 15px;">
+-                        <button id="nm-editor-delete" class="btn-delete-task">­ƒùæ´©Å</button>
++                        <button id="nm-editor-delete" class="btn-delete-task" data-i18n="btn_delete_task">­ƒùæ´©Å</button>
+                         <button id="nm-editor-save"
+-                            style="background: #2ecc71; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">Guardar</button>
++                            style="background: #2ecc71; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
++                            data-i18n="btn_save">Guardar</button>
+                     </div>
+                 </div>
+             </div>
+             <div class="modal-actions">
+                 <button id="notes-manager-close" class="btn-cancel"
+-                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; background: #eee; font-weight: bold; width: 100%;">Cerrar</button>
++                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; background: #eee; font-weight: bold; width: 100%;"
++                    data-i18n="btn_close">Cerrar</button>
+             </div>
+         </div>
+     </div>
+@@ -1544,24 +1573,24 @@
+     <div id="prompt-manager-modal" class="modal-overlay">
+         <div class="modal-content" style="width: 850px; max-width: 95%;">
+             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+-                <h3 style="margin: 0;"><span>­ƒñû Motor BYOAI (Prompts Manager)</span> <a
++                <h3 style="margin: 0;"><span data-i18n="modal_prompts_title">­ƒñû Motor BYOAI (Prompts Manager)</span> <a
+                         href="LifeOS Reference Docs.html#u-7-1" target="_blank"
+                         title="Docs 7.1, 7.2, 7.3: BYOAI Engine & Sandbox Architecture"
+                         style="text-decoration: none; cursor: help;">ÔØô</a></h3>
+                 <button id="pm-btn-new"
+-                    style="background: #2ecc71; color: white; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 0.8rem;">Ô×ò
+-                    Nuevo
++                    style="background: #2ecc71; color: white; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 0.8rem;"
++                    data-i18n="btn_new_prompt">Ô×ò Nuevo
+                     Agente</button>
+             </div>
+-            <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;">Escribe
++            <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;" data-i18n="modal_prompts_desc">Escribe
+                 System Prompts personalizados para tus
+                 LLMs preferidos. Al extraer, el motor envuelve tu JSON y la metadata oculta (Instrucciones AI de las
+                 tareas) dentro de este prompt maestro.</p>
+ 
+             <div class="pm-layout">
+                 <div class="pm-list-container">
+-                    <h4
+-                        style="font-size: 0.85rem; color: #6c5ce7; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px;">
++                    <h4 style="font-size: 0.85rem; color: #6c5ce7; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px;"
++                        data-i18n="modal_prompts_agents_title">
+                         Tus Agentes</h4>
+                     <div class="pm-list" id="pm-prompt-list">
+                         <!-- JS renders prompts here -->
+@@ -1571,23 +1600,25 @@
+                     <input type="hidden" id="pm-current-id">
+                     <div style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                         <input type="text" id="pm-editor-name" placeholder="Ej. Analista de Productividad"
++                            data-i18n="modal_prompts_name_placeholder"
+                             style="flex: 1; font-size: 1.1rem; font-weight: bold; border: none; background: transparent; outline: none; border-bottom: 2px solid #eee; border-radius: 0; padding-left: 0;">
+                         <button id="pm-btn-delete" class="btn-delete-task" style="display: none;"
+-                            title="Eliminar este prompt">­ƒùæ´©Å</button>
++                            title="Eliminar este prompt" data-i18n="btn_delete_prompt">­ƒùæ´©Å</button>
+                     </div>
+                     <textarea id="pm-editor-text"
+                         placeholder="Act├║a como un experto en productividad... Analiza el siguiente JSON de mi calendario y..."
+-                        spellcheck="false"></textarea>
++                        data-i18n="modal_prompts_text_placeholder" spellcheck="false"></textarea>
+                     <div class="modal-actions" style="margin-top: 15px; justify-content: space-between;">
+-                        <span style="font-size: 0.75rem; color: #888; align-self: center;">­ƒÆ¥ Autoguardado al
++                        <span style="font-size: 0.75rem; color: #888; align-self: center;"
++                            data-i18n="modal_prompts_auto_save">­ƒÆ¥ Autoguardado al
+                             escribir</span>
+                         <div style="display: flex; gap: 10px;">
+                             <button id="pm-editor-save"
+-                                style="background: #2ecc71; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);">­ƒÆ¥
+-                                Guardar</button>
++                                style="background: #2ecc71; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);"
++                                data-i18n="btn_save">­ƒÆ¥ Guardar</button>
+                             <button id="pm-editor-run"
+-                                style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);">ÔûÂ
+-                                Ejecutar Prompt +
++                                style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);"
++                                data-i18n="btn_run_prompt">ÔûÂ Ejecutar Prompt +
+                                 JSON</button>
+                         </div>
+                     </div>
+@@ -1596,7 +1627,8 @@
+ 
+             <div class="modal-actions">
+                 <button id="pm-close" class="btn-cancel"
+-                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; background: #eee; font-weight: bold; width: 100%;">Cerrar</button>
++                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; background: #eee; font-weight: bold; width: 100%;"
++                    data-i18n="btn_close">Cerrar</button>
+             </div>
+         </div>
+     </div>
+@@ -1747,25 +1779,25 @@
+                     <div class="dot yellow"></div>
+                     <div class="dot green"></div>
+                 </div>
+-                <div class="terminal-title">Terminal - System Sync (JSON) <a href="LifeOS Reference Docs.html#u-6-1"
+-                        target="_blank" title="Docs 6.1: The 'Sunday Sync' Backup"
+-                        style="text-decoration: none; cursor: help;">ÔØô</a>
++                <div class="terminal-title" data-i18n="modal_sync_title">Terminal - System Sync (JSON) <a
++                        href="LifeOS Reference Docs.html#u-6-1" target="_blank"
++                        title="Docs 6.1: The 'Sunday Sync' Backup" style="text-decoration: none; cursor: help;">ÔØô</a>
+                 </div>
+             </div>
+             <div
+                 style="background: #252526; padding: 10px 15px; border-bottom: 1px solid #111; display: flex; align-items: center; justify-content: space-between;">
+                 <div class="sync-section">
+-                    <button id="btn-sync-folder" class="btn-sync-folder">­ƒôé Seleccionar
++                    <button id="btn-sync-folder" class="btn-sync-folder" data-i18n="btn_sync_folder">­ƒôé Seleccionar
+                         Carpeta</button>
+-                    <span id="sync-folder-path" class="sync-status-text">No
++                    <span id="sync-folder-path" class="sync-status-text" data-i18n="sync_not_selected">No
+                         seleccionado...</span>
+                     <!-- Dropdown for previous backups -->
+                     <select id="backup-selector"
+                         style="display:none; margin-left:10px; background:#1e1e1e; color:#d4d4d4; border:1px solid #333; padding:4px; border-radius:4px; font-size:0.8rem; max-width: 200px;"></select>
+-                    <button id="btn-sync-load" class="btn-sync-load" style="display:none; margin-left: 5px;">Ô¼ç´©Å Cargar
+-                        JSON</button>
++                    <button id="btn-sync-load" class="btn-sync-load" style="display:none; margin-left: 5px;"
++                        data-i18n="btn_sync_load">Ô¼ç´©Å Cargar JSON</button>
+                 </div>
+-                <button id="btn-sync-go" class="btn-sync-go" disabled>­ƒÆ¥ Guardar Backup
++                <button id="btn-sync-go" class="btn-sync-go" disabled data-i18n="btn_sync_save">­ƒÆ¥ Guardar Backup
+                     JSON</button>
+             </div>
+             <div class="editor-container">
+@@ -1773,13 +1805,14 @@
+                 <div id="terminal-pre"></div>
+             </div>
+             <div class="terminal-console" id="terminal-console">
+-                <div class="console-line info">> LifeOS Data Engine Initialized.</div>
+-                <div class="console-line info">> Pega un JSON v├ílido arriba y haz clic
++                <div class="console-line info" data-i18n="console_init">> LifeOS Data Engine Initialized.</div>
++                <div class="console-line info" data-i18n="console_instructions">> Pega un JSON v├ílido arriba y haz clic
+                     en 'Aplicar Cambios' para inyectar un estado pasado o de la AI.</div>
+             </div>
+             <div class="terminal-footer">
+                 <button id="terminal-apply"
+-                    style="background: #007acc; color: white; border: none; border-radius: 4px; padding: 6px 16px; cursor: pointer; font-family: 'Consolas', monospace; font-size: 0.9rem;">ÔûÂ
++                    style="background: #007acc; color: white; border: none; border-radius: 4px; padding: 6px 16px; cursor: pointer; font-family: 'Consolas', monospace; font-size: 0.9rem;"
++                    data-i18n="btn_apply_changes">ÔûÂ
+                     Aplicar Cambios</button>
+             </div>
+         </div>
+@@ -1789,22 +1822,22 @@
+     <div id="onboarding-modal" class="onboarding-overlay">
+         <div class="onboarding-card">
+             <div class="onboarding-icon">­ƒÜ¿</div>
+-            <h2>Advertencia Cr├¡tica de Almacenamiento</h2>
+-            <p>LifeOS es una aplicaci├│n de <strong>soberan├¡a absoluta y cero
++            <h2 data-i18n="modal_onboard_title">Advertencia Cr├¡tica de Almacenamiento</h2>
++            <p data-i18n="modal_onboard_p1">LifeOS es una aplicaci├│n de <strong>soberan├¡a absoluta y cero
+                     confianza</strong>.
+                 No hay nadie cosechando tus m├®tricas y no hay base de datos corporativa.</p>
+-            <p>Todo tu horario y notas viven exclusivamente en este navegador (IndexedDB).
++            <p data-i18n="modal_onboard_p2">Todo tu horario y notas viven exclusivamente en este navegador (IndexedDB).
+             </p>
+-            <div class="warning-box">
++            <div class="warning-box" data-i18n="modal_onboard_warning">
+                 Si limpias la cach├® de tu navegador, usas un limpiador de sistema, o navegas en Inc├│gnito, perder├ís
+                 TODOS los datos permanentemente.<br><br>No hay recuperaci├│n de contrase├▒a.
+             </div>
+-            <div class="tip-box">
++            <div class="tip-box" data-i18n="modal_onboard_tip">
+                 ­ƒÆí <strong>La Soluci├│n:</strong> Usa el bot├│n "­ƒÆ╗ Sync JSON" (La Sincronia Dominical) situado arriba a
+                 la derecha regularmente para
+                 descargar un backup duro a tu PC f├¡sico.
+             </div>
+-            <button id="onboarding-ok" class="btn-onboarding-ok">Entiendo, tomar├® mis
++            <button id="onboarding-ok" class="btn-onboarding-ok" data-i18n="btn_onboard_ok">Entiendo, tomar├® mis
+                 medidas</button>
+         </div>
+     </div>
+@@ -1814,7 +1847,7 @@
+     </div>
+ 
+     <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+-
++    <script src="LifeOS-App-i18n.js"></script>
+     <script>
+         // --- IDB STORAGE WRAPPER ---
+         const idbStorage = {

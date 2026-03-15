@@ -1,0 +1,3430 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 LifeOS v2.0-CoC</title>
+    <!-- Quill.js CSS -->
+    <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+    <script>
+        window.onerror = function (msg, url, lineNo, columnNo, error) {
+            let dbg = document.getElementById('debug-box-xx');
+            if (!dbg) { dbg = document.createElement('div'); dbg.id = 'debug-box-xx'; dbg.style.cssText = 'position:fixed;top:0;left:0;z-index:99999;background:red;color:white;white-space:pre-wrap;padding:20px;'; document.body.appendChild(dbg); }
+            dbg.innerText += '\n' + msg + ' at line ' + lineNo;
+        };
+        window.addEventListener('unhandledrejection', function (event) {
+            let dbg = document.getElementById('debug-box-xx');
+            if (!dbg) { dbg = document.createElement('div'); dbg.id = 'debug-box-xx'; dbg.style.cssText = 'position:fixed;top:0;left:0;z-index:99999;background:red;color:white;white-space:pre-wrap;padding:20px;'; document.body.appendChild(dbg); }
+            dbg.innerText += '\nUnhandled Promise Rejection: ' + event.reason;
+        });
+    </script>
+    <style>
+        :root {
+            --primary-text: #1C2833;
+            --scale: 1.5;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+            transition: background-color 0.8s ease;
+        }
+
+        /* --- Header & Progress --- */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            transition: color 0.8s ease;
+            color: var(--primary-text);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .current-task-banner {
+            max-width: 500px;
+            margin: 0 auto 15px auto;
+            padding: 12px 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.8s ease;
+            border: 2px solid transparent;
+        }
+
+        .current-task-banner.pulsing {
+            animation: dynamic-pulse 2s infinite;
+        }
+
+        @keyframes dynamic-pulse {
+            0% {
+                box-shadow: 0 0 0 0px var(--pulse-color, rgba(200, 200, 200, 0.6));
+            }
+
+            70% {
+                box-shadow: 0 0 0 12px rgba(0, 0, 0, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0px rgba(0, 0, 0, 0);
+            }
+        }
+
+        .progress-container {
+            width: 100%;
+            max-width: 500px;
+            height: 24px;
+            background-color: #e0e0e0;
+            border-radius: 12px;
+            margin: 15px auto;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0%;
+            background-color: #2ecc71;
+            transition: width 0.4s;
+        }
+
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 0.8rem;
+            font-weight: 700;
+            color: #1C2833;
+            text-shadow: 0px 0px 4px rgba(255, 255, 255, 0.8);
+        }
+
+        /* --- Controls & Legend --- */
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .legend-color {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            border: 2px solid;
+        }
+
+        .controls {
+            text-align: center;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-new {
+            background-color: #f39c12;
+        }
+
+        .btn-new:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-events {
+            background-color: #3498db;
+        }
+
+        .btn-events:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-notes {
+            background-color: #16a085;
+        }
+
+        .btn-notes:hover {
+            background-color: #1abc9c;
+        }
+
+        .btn-reset {
+            background-color: #ff4757;
+        }
+
+        .btn-reset:hover {
+            background-color: #ff6b81;
+        }
+
+        .btn-terminal {
+            background-color: #2C3E50;
+        }
+
+        .btn-terminal:hover {
+            background-color: #1A252F;
+        }
+
+        .btn-legends {
+            background-color: #8e44ad;
+        }
+
+        .btn-legends:hover {
+            background-color: #9b59b6;
+        }
+
+        .btn-mermaid {
+            background-color: #00bcd4;
+        }
+
+        .btn-mermaid:hover {
+            background-color: #0097a7;
+        }
+
+        .btn-inventory {
+            background-color: #d35400;
+        }
+
+        .btn-inventory:hover {
+            background-color: #e67e22;
+        }
+
+        .btn-docs {
+            background-color: #636e72;
+        }
+
+        .btn-docs:hover {
+            background-color: #2d3436;
+        }
+
+        /* --- Language Picker --- */
+        .lang-picker {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 8px;
+            z-index: 100;
+        }
+
+        .lang-btn {
+            background: #fff;
+            border: 2px solid #e0e0e0;
+            border-radius: 20px;
+            padding: 4px 12px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #555;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .lang-btn:hover {
+            border-color: #3498db;
+            color: #3498db;
+            background: #f0f8ff;
+        }
+
+        .lang-btn.active-lang-btn {
+            background: #3498db;
+            color: white;
+            border-color: #3498db;
+            box-shadow: 0 2px 8px rgba(52, 152, 219, 0.4);
+        }
+
+        .display-settings {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #fff;
+            padding: 6px 12px;
+            border-radius: 6px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            font-weight: bold;
+            border: 1px solid #eee;
+        }
+
+        .display-settings label {
+            font-size: 0.85rem;
+            color: #555;
+            cursor: pointer;
+        }
+
+        .display-settings input,
+        .display-settings select {
+            border: none;
+            outline: none;
+            font-weight: bold;
+            color: var(--primary-text);
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.95rem;
+            background: transparent;
+        }
+
+        /* --- Calendar Grid --- */
+        .calendar-wrapper {
+            overflow-x: auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            min-width: 950px;
+            position: relative;
+            touch-action: pan-x pan-y;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: 60px repeat(7, 1fr);
+            gap: 10px;
+            position: relative;
+            user-select: none;
+        }
+
+        .day-header {
+            text-align: center;
+            font-weight: 600;
+            padding: 10px 0;
+            border-bottom: 2px solid #eee;
+            position: sticky;
+            top: 0;
+            background: #fff;
+            z-index: 20;
+        }
+
+        /* --- Special Events Row (Bubbles) --- */
+        .events-corner {
+            border-bottom: 2px solid #eee;
+            border-right: 1px solid #eee;
+            background: #fff;
+        }
+
+        .events-cell {
+            border-bottom: 2px solid #eee;
+            border-right: 1px dashed #f0f0f0;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-height: 45px;
+            background: #fafafa;
+        }
+
+        .event-bubble {
+            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .event-bubble:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        #current-time-line {
+            position: absolute;
+            left: 60px;
+            right: 0;
+            height: 2px;
+            background-color: #ff4757;
+            z-index: 100;
+            pointer-events: none;
+            display: none;
+            transition: top 0.3s;
+        }
+
+        #current-time-line::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: -4px;
+            width: 10px;
+            height: 10px;
+            background-color: #ff4757;
+            border-radius: 50%;
+        }
+
+        .time-col {
+            position: relative;
+            height: 2160px;
+            border-right: 1px solid #eee;
+        }
+
+        .time-slot {
+            position: absolute;
+            width: 100%;
+            text-align: right;
+            padding-right: 10px;
+            font-size: 0.8rem;
+            color: #888;
+            transform: translateY(-50%);
+        }
+
+        .day-col {
+            position: relative;
+            height: 2160px;
+            border-right: 1px dashed #f0f0f0;
+            overflow: hidden;
+        }
+
+        /* --- Selection Marquee --- */
+        .selection-marquee {
+            position: fixed;
+            border: 2px dashed #3498db;
+            background: rgba(52, 152, 219, 0.15);
+            z-index: 1000;
+            pointer-events: none;
+            display: none;
+        }
+
+        /* --- Events (Blocks) --- */
+        .event {
+            position: absolute;
+            left: 2px;
+            right: 2px;
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 0.8rem;
+            line-height: 1.2;
+            background-color: #e0e0e0;
+            border-left: 4px solid #ccc;
+            color: #333;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04);
+            transition: background-color 0.3s, opacity 0.3s, outline 0.1s;
+            top: calc((var(--visual-start) + var(--ghost-offset, 0)) * var(--scale) * 1px);
+            height: calc(var(--dur) * var(--scale) * 1px);
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .event.completed {
+            background-color: #e0e0e0 !important;
+            border-color: #b0b0b0 !important;
+            color: #888 !important;
+            text-decoration: line-through;
+            opacity: 0.6;
+            box-shadow: none !important;
+        }
+
+        .event.in-progress {
+            box-shadow: 0 0 0 3px #ff4757, 0 6px 15px rgba(255, 71, 87, 0.3) !important;
+            z-index: 60;
+        }
+
+        .event.selected-group {
+            outline: 3px solid #3498db !important;
+            outline-offset: -1px;
+            filter: brightness(1.1);
+            z-index: 80;
+        }
+
+        .event.drag-collision {
+            background-color: rgba(231, 76, 60, 0.85) !important;
+            border-left: 4px solid #c0392b !important;
+            color: #fff !important;
+            filter: grayscale(0.2);
+            z-index: 100 !important;
+            outline: none !important;
+        }
+
+        .ai-indicator {
+            position: absolute;
+            top: 4px;
+            right: 24px;
+            font-size: 0.65rem;
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10;
+            cursor: default;
+        }
+
+        .ai-indicator.has-ai {
+            opacity: 1;
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+        }
+
+        .event:hover .ai-indicator {
+            opacity: 0.5;
+        }
+
+        .event:hover .ai-indicator.has-ai {
+            opacity: 1;
+        }
+
+        .edit-note {
+            position: absolute;
+            top: 4px;
+            right: 6px;
+            font-size: 0.8rem;
+            opacity: 0;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+
+        .edit-note.has-note {
+            opacity: 1;
+            filter: drop-shadow(0 0 2px rgba(255, 255, 255, 0.8));
+        }
+
+        .event:hover .edit-note {
+            opacity: 0.6;
+        }
+
+        .event:hover .edit-note.has-note {
+            opacity: 1;
+        }
+
+        .resize-handle {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            cursor: ns-resize;
+            z-index: 10;
+        }
+
+        /* --- Inventory Specific Styles --- */
+        .inventory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+
+        .inventory-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-left: 4px solid #ccc;
+            padding: 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .inventory-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .inv-title {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #333;
+        }
+
+        .inv-meta {
+            font-size: 0.75rem;
+            color: #777;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* --- Modals --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .modal-content {
+            background: #fff;
+            padding: 20px;
+            border-radius: 12px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(-20px);
+            transition: transform 0.2s;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: translateY(0);
+        }
+
+        .form-group {
+            margin-bottom: 12px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #555;
+        }
+
+        .modal-content input,
+        .modal-content select,
+        .modal-content textarea {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-delete-task {
+            background-color: #e74c3c;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-stash-task {
+            background-color: #d35400;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: auto;
+        }
+
+        /* --- Notes Manager Specific Styles --- */
+        .nm-layout {
+            display: flex;
+            gap: 20px;
+            height: 60vh;
+            min-height: 500px;
+            margin-bottom: 15px;
+        }
+
+        .nm-list-container {
+            flex: 1;
+            overflow-y: auto;
+            border-right: 1px solid #eee;
+            padding-right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .nm-editor {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            overflow: hidden;
+        }
+
+        .nm-item {
+            padding: 10px 12px;
+            border: 1px solid transparent;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-bottom: 5px;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .nm-item:hover {
+            background: #f8f9fa;
+            border-color: #ddd;
+        }
+
+        .nm-item.active-item {
+            border-left: 4px solid #2ecc71;
+        }
+
+        .nm-item.orphaned-item {
+            border-left: 4px solid #e74c3c;
+            opacity: 0.85;
+        }
+
+        .nm-item.selected {
+            background: #e8f4f8;
+            border-color: #3498db;
+        }
+
+        .nm-item-title {
+            font-weight: bold;
+            font-size: 0.95rem;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nm-item-preview {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .nm-badge {
+            font-size: 0.65rem;
+            padding: 2px 6px;
+            border-radius: 10px;
+            color: white;
+            font-weight: bold;
+            width: fit-content;
+        }
+
+        .nm-badge.active {
+            background: #2ecc71;
+        }
+
+        .nm-badge.orphaned {
+            background: #e74c3c;
+        }
+
+        /* --- Prompt Manager Styles --- */
+        .btn-ai {
+            background-color: #6c5ce7;
+        }
+
+        .btn-ai:hover {
+            background-color: #a29bfe;
+        }
+
+        .pm-layout {
+            display: flex;
+            gap: 20px;
+            height: 55vh;
+            min-height: 400px;
+            margin-bottom: 15px;
+        }
+
+        .pm-list-container {
+            flex: 0.8;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            border-right: 1px solid #eee;
+            padding-right: 10px;
+        }
+
+        .pm-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .pm-item {
+            padding: 10px 12px;
+            border: 1px solid transparent;
+            border-bottom: 1px solid #eee;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .pm-item:hover {
+            background: #f8f9fa;
+            border-color: #ddd;
+        }
+
+        .pm-item.selected {
+            background: #ede7f6;
+            border-color: #6c5ce7;
+            border-left: 4px solid #6c5ce7;
+        }
+
+        .pm-item-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: #333;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pm-item-preview {
+            font-size: 0.75rem;
+            color: #7f8c8d;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .pm-editor {
+            flex: 1.5;
+            display: flex;
+            flex-direction: column;
+            background: #fafafa;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            overflow: hidden;
+        }
+
+        .pm-editor textarea {
+            flex: 1;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 12px;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 0.9rem;
+            resize: none;
+            outline: none;
+            line-height: 1.6;
+            background: #fff;
+        }
+
+        .pm-editor textarea:focus {
+            border-color: #6c5ce7;
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.1);
+        }
+
+        /* --- Terminal UI --- */
+        .terminal-wrapper {
+            background: #1e1e1e;
+            border-radius: 10px;
+            width: 800px;
+            max-width: 95%;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            transform: translateY(-20px);
+            transition: transform 0.2s;
+        }
+
+        .modal-overlay.show .terminal-wrapper {
+            transform: translateY(0);
+        }
+
+        .terminal-header {
+            background: #2d2d2d;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #111;
+        }
+
+        .terminal-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .terminal-dots .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .dot.red {
+            background: #ff5f56;
+        }
+
+        .dot.yellow {
+            background: #ffbd2e;
+        }
+
+        .dot.green {
+            background: #27c93f;
+        }
+
+        .terminal-title {
+            color: #858585;
+            font-family: sans-serif;
+            font-size: 0.85rem;
+            margin-left: auto;
+            margin-right: auto;
+            padding-right: 40px;
+        }
+
+        .editor-container {
+            position: relative;
+            height: 350px;
+            background: #1e1e1e;
+        }
+
+        #terminal-textarea,
+        #terminal-pre {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 15px;
+            border: none;
+            outline: none;
+            font-family: 'Consolas', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            white-space: pre;
+        }
+
+        #terminal-textarea {
+            color: transparent;
+            background: transparent;
+            caret-color: #d4d4d4;
+            z-index: 2;
+            resize: none;
+            overflow: auto;
+        }
+
+        #terminal-pre {
+            z-index: 1;
+            pointer-events: none;
+            color: #d4d4d4;
+            overflow: hidden;
+        }
+
+        .syn-key {
+            color: #9cdcfe;
+        }
+
+        .syn-string {
+            color: #ce9178;
+        }
+
+        .syn-number {
+            color: #b5cea8;
+        }
+
+        .syn-boolean,
+        .syn-null {
+            color: #569cd6;
+        }
+
+        .terminal-console {
+            height: 130px;
+            background: #000;
+            border-top: 1px solid #333;
+            padding: 10px 15px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.85rem;
+            overflow-y: auto;
+        }
+
+        .console-line {
+            margin-bottom: 4px;
+        }
+
+        .console-line.info {
+            color: #cccccc;
+        }
+
+        .console-line.error {
+            color: #f14c4c;
+            font-weight: bold;
+        }
+
+        .console-line.success {
+            color: #89d185;
+            font-weight: bold;
+        }
+
+        .terminal-footer {
+            background: #252526;
+            padding: 10px 15px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid #333;
+        }
+
+        /* Quill Specific Overrides */
+        .ql-toolbar.ql-snow {
+            background: #fff;
+            border-radius: 6px 6px 0 0;
+            border: 1px solid #ccc;
+            font-family: inherit;
+        }
+
+        .ql-container.ql-snow {
+            border-radius: 0 0 6px 6px;
+            border: 1px solid #ccc;
+            background: #fff;
+            font-family: inherit;
+            font-size: 0.95rem;
+        }
+
+        .ql-editor {
+            min-height: 100px;
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+
+        /* --- Onboarding Warning Modal --- */
+        .onboarding-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            transition: opacity 0.4s;
+        }
+
+        .onboarding-overlay.show {
+            display: flex;
+            opacity: 1;
+        }
+
+        .onboarding-card {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            border: 2px solid #e74c3c;
+            border-radius: 16px;
+            padding: 40px 35px;
+            width: 480px;
+            max-width: 90%;
+            box-shadow: 0 0 40px rgba(231, 76, 60, 0.3), 0 20px 60px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            color: #ecf0f1;
+            animation: onboard-enter 0.5s ease-out;
+        }
+
+        @keyframes onboard-enter {
+            from {
+                transform: scale(0.8) translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .onboarding-icon {
+            font-size: 4rem;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 0 10px rgba(231, 76, 60, 0.5));
+        }
+
+        .onboarding-card h2 {
+            font-size: 1.5rem;
+            color: #e74c3c;
+            margin-bottom: 15px;
+            text-shadow: 0 0 10px rgba(231, 76, 60, 0.3);
+        }
+
+        .onboarding-card p {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #bdc3c7;
+            margin-bottom: 12px;
+        }
+
+        .onboarding-card .warning-box {
+            background: rgba(231, 76, 60, 0.15);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin: 15px 0;
+            font-size: 0.9rem;
+            color: #e74c3c;
+            font-weight: bold;
+        }
+
+        .onboarding-card .tip-box {
+            background: rgba(46, 204, 113, 0.1);
+            border: 1px solid rgba(46, 204, 113, 0.3);
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin: 15px 0;
+            font-size: 0.85rem;
+            color: #2ecc71;
+        }
+
+        .btn-onboarding-ok {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            padding: 14px 40px;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+        }
+
+        .btn-onboarding-ok:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+        }
+
+        /* --- System Sync Button Styles --- */
+        .sync-section {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: auto;
+            flex-wrap: wrap;
+        }
+
+        .btn-sync-folder {
+            background: #8e44ad;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+
+        .btn-sync-folder:hover {
+            background: #9b59b6;
+        }
+
+        .btn-sync-go {
+            background: #e67e22;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 14px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .btn-sync-go:hover:not(:disabled) {
+            background: #f39c12;
+        }
+
+        .btn-sync-go:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .btn-sync-load {
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 6px 12px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            transition: background 0.2s;
+        }
+
+        .btn-sync-load:hover {
+            background: #2980b9;
+        }
+
+        .sync-status-text {
+            font-size: 0.7rem;
+            color: #888;
+            font-family: 'Consolas', monospace;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="lang-picker">
+        <button class="lang-btn active-lang-btn" data-lang="en">🇺🇸 EN</button>
+        <button class="lang-btn" data-lang="es">🇲🇽 ES</button>
+        <button class="lang-btn" data-lang="pt">🇧🇷 PT</button>
+    </div>
+
+    <div class="header" id="main-header">
+        <h1 data-i18n="app_title">🚀 LifeOS</h1>
+        <div id="current-task-banner" class="current-task-banner">
+            <span data-i18n="current_task_label">Tarea Actual:</span> <span id="current-task-name">Tiempo Libre /
+                Descanso</span>
+        </div>
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-bar-fill"></div>
+            <span class="progress-text" id="progress-text">0% Completado (0/0)</span>
+        </div>
+
+        <div class="legend" id="dynamic-legend"></div>
+
+        <div class="controls">
+            <div class="display-settings">
+                <label data-i18n="layout_label">🗺️ Layout:</label>
+                <select id="layout-selector" style="max-width: 120px;"></select>
+                <button id="new-layout-btn"
+                    style="background:none;border:none;cursor:pointer;color:#2ecc71;font-weight:bold;font-size:1.1rem; margin-left: 2px;"
+                    title="Crear Nuevo Layout">+</button>
+                <button id="duplicate-layout-btn"
+                    style="background:none;border:none;cursor:pointer;color:#3498db;font-size:1rem; margin-left: 2px;"
+                    title="Duplicar Layout">📄</button>
+                <button id="rename-layout-btn"
+                    style="background:none;border:none;cursor:pointer;color:#f39c12;font-size:1rem; margin-left: 2px;"
+                    title="Renombrar Layout">✏️</button>
+                <button id="delete-layout-btn"
+                    style="background:none;border:none;cursor:pointer;color:#e74c3c;font-size:1rem; margin-left: 2px;"
+                    title="Eliminar Layout">🗑️</button>
+            </div>
+            <div class="display-settings">
+                <label for="display-start-input" data-i18n="day_start_label">⚙️ Día Inicia:</label>
+                <input type="time" id="display-start-input" title="Desliza el horario visual">
+            </div>
+            <button class="btn btn-inventory" id="inventory-btn" data-i18n="btn_inventory">🎒 Inventario</button>
+            <button class="btn btn-legends" id="edit-legends-btn" data-i18n="btn_categories">🏷️ Categorías</button>
+            <button class="btn btn-events" id="events-btn" data-i18n="btn_events">📅 Eventos</button>
+            <button class="btn btn-notes" id="notes-manager-btn" data-i18n="btn_notes">📝 Base de Notas</button>
+            <button class="btn btn-ai" id="prompts-btn" data-i18n="btn_prompts">🤖 AI Prompts</button>
+            <button class="btn btn-new" id="new-task-btn" data-i18n="btn_new_task">➕ Nueva Tarea</button>
+            <button class="btn btn-reset" id="reset-btn" data-i18n="btn_reset">🔄 Reiniciar</button>
+            <span id="storage-meter"
+                style="font-size: 0.8rem; font-weight: bold; color: #7f8c8d; margin-left: 10px; margin-right: 10px;">Storage:
+                0%</span>
+            <button class="btn btn-terminal" id="terminal-btn" data-i18n="btn_sync">💻 Sync JSON</button>
+            <button class="btn btn-docs" id="docs-btn" onclick="window.open('LifeOS Reference Docs.html', '_blank')"
+                data-i18n="btn_docs">📚
+                Docs</button>
+        </div>
+    </div>
+
+    <div id="selection-marquee" class="selection-marquee"></div>
+
+    <div class="calendar-wrapper" id="calendar-wrapper">
+        <div class="calendar" id="calendar">
+            <div id="current-time-line"></div>
+
+            <div class="day-header"></div>
+            <div class="day-header" id="dh-0">Lun</div>
+            <div class="day-header" id="dh-1">Mar</div>
+            <div class="day-header" id="dh-2">Mié</div>
+            <div class="day-header" id="dh-3">Jue</div>
+            <div class="day-header" id="dh-4">Vie</div>
+            <div class="day-header" id="dh-5">Sáb</div>
+            <div class="day-header" id="dh-6">Dom</div>
+
+            <div class="time-col" id="time-col-render"></div>
+            <div class="day-col" data-day="0"></div>
+            <div class="day-col" data-day="1"></div>
+            <div class="day-col" data-day="2"></div>
+            <div class="day-col" data-day="3"></div>
+            <div class="day-col" data-day="4"></div>
+            <div class="day-col" data-day="5"></div>
+            <div class="day-col" data-day="6"></div>
+        </div>
+    </div>
+
+    <!-- New Layout Modal -->
+    <div id="new-layout-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px;" data-i18n="modal_new_layout_title">🗺️ Crear Nuevo Layout</h3>
+            <div class="form-group">
+                <label data-i18n="modal_new_layout_label">Nombre del Layout</label>
+                <input type="text" id="new-layout-name-input" placeholder="Ej. Vacaciones, Semana B..."
+                    data-i18n="modal_new_layout_placeholder">
+            </div>
+            <div class="modal-actions">
+                <button id="new-layout-cancel" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;"
+                    data-i18n="btn_cancel">Cancelar</button>
+                <button id="new-layout-save"
+                    style="background: #2ecc71; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;"
+                    data-i18n="btn_create_layout">Crear
+                    Layout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Duplicate Layout Modal -->
+    <div id="duplicate-layout-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px;" data-i18n="modal_dup_layout_title">📄 Duplicar Layout</h3>
+            <div class="form-group">
+                <label><span data-i18n="modal_dup_layout_label">Nombre de la copia de</span> "<span
+                        id="duplicate-layout-current"></span>"</label>
+                <input type="text" id="duplicate-layout-name-input">
+            </div>
+            <div class="modal-actions">
+                <button id="duplicate-layout-cancel" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;"
+                    data-i18n="btn_cancel">Cancelar</button>
+                <button id="duplicate-layout-save"
+                    style="background: #3498db; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;"
+                    data-i18n="btn_duplicate_layout">Duplicar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename Layout Modal -->
+    <div id="rename-layout-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px;" data-i18n="modal_ren_layout_title">✏️ Renombrar Layout</h3>
+            <div class="form-group">
+                <label><span data-i18n="modal_ren_layout_label">Nuevo Nombre para</span> "<span
+                        id="rename-layout-current"></span>"</label>
+                <input type="text" id="rename-layout-name-input">
+            </div>
+            <div class="modal-actions">
+                <button id="rename-layout-cancel" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;"
+                    data-i18n="btn_cancel">Cancelar</button>
+                <button id="rename-layout-save"
+                    style="background: #f39c12; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;"
+                    data-i18n="btn_rename_layout">Renombrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Layout Confirm Modal -->
+    <div id="delete-layout-confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 data-i18n="modal_del_layout_title">Confirmar Eliminación</h3>
+            <p style="margin: 15px 0; color: #e74c3c; font-weight: bold;"><span
+                    data-i18n="modal_del_layout_label">¿Eliminar el layout</span> "<span
+                    id="delete-layout-target"></span>"? <span data-i18n="modal_del_layout_warning">Esta acción es
+                    irreversible.</span></p>
+            <div class="modal-actions">
+                <button id="delete-layout-confirm-cancel" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;"
+                    data-i18n="btn_cancel">Cancelar</button>
+                <button id="delete-layout-confirm-yes"
+                    style="background: #e74c3c; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer;"
+                    data-i18n="btn_delete_layout">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Stash All Confirm Modal -->
+    <div id="stash-all-confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 data-i18n="modal_stash_all_title">📦 Guardar Todo en el Inventario</h3>
+            <p style="margin: 15px 0; color: #d35400; font-weight: bold;" data-i18n="modal_stash_all_prompt">¿Estás
+                seguro de que deseas vaciar tu
+                calendario actual y mover todas las tareas al inventario?</p>
+            <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;" data-i18n="modal_stash_all_desc">Esta
+                acción vaciará el layout actual por
+                completo y no se puede deshacer de golpe. Tus tareas y notas estarán a salvo en el inventario.</p>
+            <div class="modal-actions">
+                <button id="stash-all-confirm-cancel" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;"
+                    data-i18n="btn_cancel">Cancelar</button>
+                <button id="stash-all-confirm-yes"
+                    style="background: #d35400; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold;"
+                    data-i18n="btn_stash_all_confirm">Sí,
+                    Guardar Todo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Inventario / Stash Modal -->
+    <div id="inventory-modal" class="modal-overlay">
+        <div class="modal-content" style="width: 600px; max-width: 95%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;"><span data-i18n="modal_inv_title">🎒 Inventario de Tareas</span> <a
+                        href="LifeOS Reference Docs.html#u-4-1" target="_blank"
+                        title="Docs 4.1: The Three Memory Layers, 4.2: The Clean Slate Protocol"
+                        style="text-decoration: none; cursor: help;">❓</a></h3>
+                <button id="stash-all-btn"
+                    style="background: #d35400; color: white; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 0.8rem;"
+                    title="Quitar todas las tareas de la semana actual" data-i18n="btn_stash_all">📦 Guardar Todo el
+                    Tablero</button>
+            </div>
+            <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;" data-i18n="modal_inv_desc">Haz clic en una
+                tarea para colocarla en tu
+                calendario actual. Te pediremos que elijas el día y la hora.</p>
+
+            <div id="inventory-list" class="inventory-grid">
+                <!-- Rendered by JS -->
+            </div>
+
+            <div class="modal-actions" style="margin-top: 20px;">
+                <button id="inventory-close" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; background: #eee; font-weight: bold; width: 100%;"
+                    data-i18n="btn_close_inv">Cerrar
+                    Inventario</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Task Editor Modal -->
+    <div id="note-modal" class="modal-overlay">
+        <div class="modal-content" style="width: 500px; max-height: 90vh; overflow-y: auto;">
+            <h3 id="modal-main-title" style="margin-bottom: 15px;" data-i18n="modal_task_title">Editar Tarea</h3>
+            <input type="hidden" id="modal-task-id">
+            <input type="hidden" id="modal-task-original-day">
+
+            <div class="form-group">
+                <label data-i18n="modal_task_name_label">Nombre de la Tarea</label>
+                <input type="text" id="modal-task-name">
+                <a href="LifeOS Reference Docs.html#u-9-2" target="_blank"
+                    title="Docs 9.2: The Identity Predictor Formula"
+                    style="text-decoration: none; cursor: help; font-size: 0.85rem;">❓</a>
+                <div id="name-status-indicator" style="font-size: 0.75rem; margin-top: 4px; font-weight: bold;"></div>
+                <div id="global-rename-container"
+                    style="display: none; margin-top: 8px; background: #f8f9fa; padding: 8px; border-radius: 6px; border: 1px solid #eee;">
+                    <label
+                        style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #d35400; font-size: 0.85rem;">
+                        <input type="checkbox" id="global-rename-checkbox">
+                        <strong data-i18n="modal_task_rename_global">🌍 Renombrar globalmente (en todos los
+                            layouts)</strong>
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group" style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label data-i18n="modal_task_day_label">Día</label>
+                    <select id="modal-task-day">
+                        <option value="0" data-i18n="day_mon">Lunes</option>
+                        <option value="1" data-i18n="day_tue">Martes</option>
+                        <option value="2" data-i18n="day_wed">Miércoles</option>
+                        <option value="3" data-i18n="day_thu">Jueves</option>
+                        <option value="4" data-i18n="day_fri">Viernes</option>
+                        <option value="5" data-i18n="day_sat">Sábado</option>
+                        <option value="6" data-i18n="day_sun">Domingo</option>
+                    </select>
+                </div>
+                <div style="flex: 1;">
+                    <label data-i18n="modal_task_cat_label">Categoría</label>
+                    <select id="modal-task-type"></select>
+                </div>
+            </div>
+
+            <div class="form-group" style="display: flex; gap: 10px;">
+                <div style="flex: 1;"><label data-i18n="modal_task_start_label">Inicio</label><input type="time"
+                        id="modal-start-time"></div>
+                <div style="flex: 1;"><label data-i18n="modal_task_end_label">Fin</label><input type="time"
+                        id="modal-end-time"></div>
+            </div>
+            <div class="form-group">
+                <label data-i18n="modal_task_notes_label">Notas (Globales, compartidas por nombre)</label>
+                <div id="modal-quill-editor" style="height: 150px;"></div>
+            </div>
+            <div class="form-group">
+                <div id="ai-instructions-toggle"
+                    style="display: flex; align-items: center; gap: 8px; cursor: pointer; padding: 6px 0;">
+                    <span style="font-size: 1rem;">ℹ️</span>
+                    <span style="font-weight: bold; color: #6c5ce7; font-size: 0.85rem;"
+                        data-i18n="modal_task_ai_label">Instrucciones AI (Metadata para
+                        el BYOAI Engine)</span>
+                    <span id="ai-toggle-arrow"
+                        style="font-size: 0.7rem; color: #999; transition: transform 0.2s;">▶</span>
+                    <span id="ai-badge"
+                        style="font-size: 0.65rem; padding: 2px 6px; border-radius: 10px; background: #6c5ce7; color: white; font-weight: bold; display: none;">AI</span>
+                </div>
+                <div id="ai-instructions-container" style="display: none; margin-top: 8px;">
+                    <textarea id="modal-ai-instructions" rows="3"
+                        placeholder="Instrucciones específicas para la IA sobre esta tarea. Ej: 'Enfócate en analizar si estoy dedicando suficiente tiempo a este bloque de deep work.'"
+                        style="width: 100%; padding: 8px; border: 2px solid #6c5ce7; border-radius: 6px; outline: none; font-family: 'Consolas', monospace; font-size: 0.85rem; resize: vertical; background: #f8f5ff;"></textarea>
+                    <div style="font-size: 0.75rem; color: #7f8c8d; margin-top: 4px;" data-i18n="modal_task_ai_desc">💡
+                        Este texto se adjunta
+                        automáticamente al ejecutar un prompt desde el AI Manager.</div>
+                </div>
+            </div>
+            <div id="modal-error"
+                style="color: red; display: none; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold;"></div>
+
+            <div class="modal-actions">
+                <button id="modal-stash" class="btn-stash-task" title="Quitar del calendario y enviar al inventario"
+                    data-i18n="btn_stash_task">🎒
+                    Guardar</button>
+                <button id="modal-delete" class="btn-delete-task" title="Eliminar del calendario (No borra la nota)"
+                    data-i18n="btn_delete_task">🗑️</button>
+                <button id="modal-duplicate" class="btn"
+                    style="background: #9b59b6; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; display: none;"
+                    data-i18n="btn_duplicate_task">Duplicar</button>
+                <button id="modal-cancel" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;"
+                    data-i18n="btn_cancel">Cancelar</button>
+                <button id="modal-save"
+                    style="background: #2ecc71; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
+                    data-i18n="btn_save">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notes Manager Modal -->
+    <div id="notes-manager-modal" class="modal-overlay">
+        <div class="modal-content" style="width: 850px; max-width: 95%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;" data-i18n="btn_notes">📝 Base de Notas</h3>
+            </div>
+            <div class="pm-layout">
+                <div class="pm-list-container">
+                    <h4 style="font-size: 0.85rem; color: #2ecc71; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px;"
+                        data-i18n="nm_active_title">✅ Activas</h4>
+                    <div class="pm-list" id="nm-active-list"></div>
+                    <h4 style="font-size: 0.85rem; color: #e74c3c; margin-bottom: 8px; margin-top: 12px; border-bottom: 1px solid #eee; padding-bottom: 4px;"
+                        data-i18n="nm_orphaned_title">📦 Archivadas</h4>
+                    <div class="pm-list" id="nm-orphaned-list"></div>
+                </div>
+                <div class="pm-editor" id="nm-editor-panel" style="visibility: hidden;">
+                    <input type="hidden" id="nm-current-key">
+                    <input type="hidden" id="nm-current-status">
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                        <input type="text" id="nm-editor-title" readonly
+                            style="flex: 1; font-size: 1.1rem; font-weight: bold; border: none; background: transparent; outline: none; border-bottom: 2px solid #eee; border-radius: 0; padding-left: 0;">
+                        <span id="nm-editor-badge" class="nm-badge"></span>
+                    </div>
+                    <div id="nm-quill-editor" style="height: 200px;"></div>
+                    <div class="modal-actions" style="margin-top: 15px;">
+                        <button id="nm-editor-delete" class="btn-delete-task" data-i18n="btn_delete_task">🗑️</button>
+                        <button id="nm-editor-save"
+                            style="background: #2ecc71; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;"
+                            data-i18n="btn_save">Guardar</button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="notes-manager-close" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; background: #eee; font-weight: bold; width: 100%;"
+                    data-i18n="btn_close">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Prompts Manager Modal -->
+    <div id="prompt-manager-modal" class="modal-overlay">
+        <div class="modal-content" style="width: 850px; max-width: 95%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 style="margin: 0;"><span data-i18n="modal_prompts_title">🤖 Motor BYOAI (Prompts Manager)</span> <a
+                        href="LifeOS Reference Docs.html#u-7-1" target="_blank"
+                        title="Docs 7.1, 7.2, 7.3: BYOAI Engine & Sandbox Architecture"
+                        style="text-decoration: none; cursor: help;">❓</a></h3>
+                <button id="pm-btn-new"
+                    style="background: #2ecc71; color: white; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer; font-weight: bold; font-size: 0.8rem;"
+                    data-i18n="btn_new_prompt">➕ Nuevo
+                    Agente</button>
+            </div>
+            <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;" data-i18n="modal_prompts_desc">Escribe
+                System Prompts personalizados para tus
+                LLMs preferidos. Al extraer, el motor envuelve tu JSON y la metadata oculta (Instrucciones AI de las
+                tareas) dentro de este prompt maestro.</p>
+
+            <div class="pm-layout">
+                <div class="pm-list-container">
+                    <h4 style="font-size: 0.85rem; color: #6c5ce7; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 4px;"
+                        data-i18n="modal_prompts_agents_title">
+                        Tus Agentes</h4>
+                    <div class="pm-list" id="pm-prompt-list">
+                        <!-- JS renders prompts here -->
+                    </div>
+                </div>
+                <div class="pm-editor" id="pm-editor-panel">
+                    <input type="hidden" id="pm-current-id">
+                    <div style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                        <input type="text" id="pm-editor-name" placeholder="Ej. Analista de Productividad"
+                            data-i18n="modal_prompts_name_placeholder"
+                            style="flex: 1; font-size: 1.1rem; font-weight: bold; border: none; background: transparent; outline: none; border-bottom: 2px solid #eee; border-radius: 0; padding-left: 0;">
+                        <button id="pm-btn-delete" class="btn-delete-task" style="display: none;"
+                            title="Eliminar este prompt" data-i18n="btn_delete_prompt">🗑️</button>
+                    </div>
+                    <textarea id="pm-editor-text"
+                        placeholder="Actúa como un experto en productividad... Analiza el siguiente JSON de mi calendario y..."
+                        data-i18n="modal_prompts_text_placeholder" spellcheck="false"></textarea>
+                    <div class="modal-actions" style="margin-top: 15px; justify-content: space-between;">
+                        <span style="font-size: 0.75rem; color: #888; align-self: center;"
+                            data-i18n="modal_prompts_auto_save">💾 Autoguardado al
+                            escribir</span>
+                        <div style="display: flex; gap: 10px;">
+                            <button id="pm-editor-save"
+                                style="background: #2ecc71; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(46, 204, 113, 0.3);"
+                                data-i18n="btn_save">💾 Guardar</button>
+                            <button id="pm-editor-run"
+                                style="background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(108, 92, 231, 0.3);"
+                                data-i18n="btn_run_prompt">▶ Ejecutar Prompt +
+                                JSON</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button id="pm-close" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; background: #eee; font-weight: bold; width: 100%;"
+                    data-i18n="btn_close">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Note Delete Confirm Modal -->
+    <div id="note-delete-confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Confirmar Eliminación</h3>
+            <p style="margin: 15px 0; color: #e74c3c; font-weight: bold;">Esta tarea está activa en tus layouts. ¿Seguro
+                que deseas borrar su nota?</p>
+            <div class="modal-actions">
+                <button id="note-delete-confirm-cancel" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">Cancelar</button>
+                <button id="note-delete-confirm-yes"
+                    style="background: #e74c3c; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer;">Eliminar
+                    Nota</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Legends Config Modal -->
+    <div id="legend-modal" class="modal-overlay">
+        <div class="modal-content" style="width: 500px; max-width: 95%;">
+            <h3 style="margin-bottom: 10px;">🏷️ Configurar Leyendas (Categorías) <a
+                    href="LifeOS Reference Docs.html#u-14-1" target="_blank"
+                    title="Docs 14.1: The Legends Engine, 14.2: Power User Color Science"
+                    style="text-decoration: none; cursor: help;">❓</a></h3>
+            <div id="legend-list" style="max-height: 300px; overflow-y: auto; margin-bottom: 15px;"></div>
+            <button id="add-legend-btn"
+                style="width: 100%; padding: 10px; background: #f8f9fa; border: 2px dashed #ccc; border-radius: 6px; cursor: pointer; font-weight: bold; color: #555;">➕
+                Añadir Nueva Categoría</button>
+            <div class="modal-actions" style="margin-top: 15px;">
+                <button id="legend-cancel" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; margin-right: auto;">Cancelar</button>
+                <button id="legend-save"
+                    style="background: #2ecc71; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">Guardar
+                    Leyendas</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Events Manager Modal -->
+    <div id="events-manager-modal" class="modal-overlay">
+        <div class="modal-content" style="width: 450px;">
+            <h3 style="margin-bottom: 10px;">📅 Gestor de Eventos Especiales <a href="LifeOS Reference Docs.html#u-8-1"
+                    target="_blank" title="Docs 8.1: The Floating Event Bubble, 8.2: The Repeat Math Engine"
+                    style="text-decoration: none; cursor: help;">❓</a></h3>
+            <div id="events-manager-list"
+                style="max-height: 300px; overflow-y: auto; margin-bottom: 15px; border: 1px solid #eee; border-radius: 6px; padding: 5px;">
+            </div>
+            <div class="modal-actions" style="margin-top: 15px;">
+                <button id="events-manager-close" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; margin-right: auto;">Cerrar</button>
+                <button id="events-manager-new"
+                    style="background: #3498db; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">➕
+                    Nuevo Evento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Special Event Editor Modal -->
+    <div id="special-event-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 id="special-event-modal-title" style="margin-bottom: 15px;">Nuevo Evento Especial</h3>
+            <input type="hidden" id="special-event-id">
+            <div class="form-group">
+                <label>Título del Evento</label>
+                <input type="text" id="special-event-title">
+            </div>
+            <div class="form-group" style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label>Fecha de Inicio</label>
+                    <input type="date" id="special-event-date">
+                </div>
+                <div style="flex: 1;">
+                    <label>Categoría</label>
+                    <select id="special-event-type"></select>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top: 10px;">
+                <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; color: #34495e;">
+                    <input type="checkbox" id="special-event-repeat-toggle" style="width: auto;">
+                    <strong>🔄 Repetir evento</strong>
+                </label>
+            </div>
+            <div id="special-event-repeat-config"
+                style="display: none; background: #f8f9fa; padding: 12px; border-radius: 6px; margin-bottom: 12px; border: 1px solid #eee;">
+                <label style="margin-bottom: 5px; display: block; font-size: 0.85rem;">Repetir cada:</label>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <input type="number" id="special-event-repeat-interval" value="1" min="1" style="width: 80px;">
+                    <select id="special-event-repeat-unit" style="flex: 1;">
+                        <option value="days">Día(s)</option>
+                        <option value="weeks">Semana(s)</option>
+                        <option value="months">Mes(es)</option>
+                        <option value="years">Año(s)</option>
+                    </select>
+                </div>
+            </div>
+            <div id="special-event-error"
+                style="color: red; display: none; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold;"></div>
+            <div class="modal-actions">
+                <button id="special-event-delete" class="btn-delete-task" style="margin-right: auto;">Eliminar</button>
+                <button id="special-event-cancel" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">Cancelar</button>
+                <button id="special-event-save"
+                    style="background: #2ecc71; color: white; padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: bold;">Guardar
+                    Evento</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Modal -->
+    <div id="confirm-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Confirmar Reinicio</h3>
+            <p style="margin: 15px 0;">¿Estás seguro de que deseas desmarcar todas las tareas de la semana?</p>
+            <div class="modal-actions">
+                <button id="confirm-cancel" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">Cancelar</button>
+                <button id="confirm-yes"
+                    style="background: #ff4757; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer;">Reiniciar
+                    Todo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div id="delete-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>Confirmar Eliminación</h3>
+            <p style="margin: 15px 0; color: #e74c3c; font-weight: bold;">¿Eliminar esta tarea del calendario? (Su nota
+                se conservará si tiene nombre).</p>
+            <div class="modal-actions">
+                <button id="delete-cancel" class="btn-cancel"
+                    style="padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer;">Cancelar</button>
+                <button id="delete-yes"
+                    style="background: #e74c3c; color: white; padding: 8px 16px; border-radius: 6px; border: none; cursor: pointer;">Eliminar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- System Sync / Terminal Modal -->
+    <div id="terminal-modal" class="modal-overlay">
+        <div class="terminal-wrapper">
+            <div class="terminal-header">
+                <div class="terminal-dots">
+                    <div class="dot red" id="terminal-close-dot" style="cursor: pointer;"></div>
+                    <div class="dot yellow"></div>
+                    <div class="dot green"></div>
+                </div>
+                <div class="terminal-title" data-i18n="modal_sync_title">Terminal - System Sync (JSON) <a
+                        href="LifeOS Reference Docs.html#u-6-1" target="_blank"
+                        title="Docs 6.1: The 'Sunday Sync' Backup" style="text-decoration: none; cursor: help;">❓</a>
+                </div>
+            </div>
+            <div
+                style="background: #252526; padding: 10px 15px; border-bottom: 1px solid #111; display: flex; align-items: center; justify-content: space-between;">
+                <div class="sync-section">
+                    <button id="btn-sync-folder" class="btn-sync-folder" data-i18n="btn_sync_folder">📂 Seleccionar
+                        Carpeta</button>
+                    <span id="sync-folder-path" class="sync-status-text" data-i18n="sync_not_selected">No
+                        seleccionado...</span>
+                    <!-- Dropdown for previous backups -->
+                    <select id="backup-selector"
+                        style="display:none; margin-left:10px; background:#1e1e1e; color:#d4d4d4; border:1px solid #333; padding:4px; border-radius:4px; font-size:0.8rem; max-width: 200px;"></select>
+                    <button id="btn-sync-load" class="btn-sync-load" style="display:none; margin-left: 5px;"
+                        data-i18n="btn_sync_load">⬇️ Cargar JSON</button>
+                </div>
+                <button id="btn-sync-go" class="btn-sync-go" disabled data-i18n="btn_sync_save">💾 Guardar Backup
+                    JSON</button>
+            </div>
+            <div class="editor-container">
+                <textarea id="terminal-textarea" spellcheck="false"></textarea>
+                <div id="terminal-pre"></div>
+            </div>
+            <div class="terminal-console" id="terminal-console">
+                <div class="console-line info" data-i18n="console_init">> LifeOS Data Engine Initialized.</div>
+                <div class="console-line info" data-i18n="console_instructions">> Pega un JSON válido arriba y haz clic
+                    en 'Aplicar Cambios' para inyectar un estado pasado o de la AI.</div>
+            </div>
+            <div class="terminal-footer">
+                <button id="terminal-apply"
+                    style="background: #007acc; color: white; border: none; border-radius: 4px; padding: 6px 16px; cursor: pointer; font-family: 'Consolas', monospace; font-size: 0.9rem;"
+                    data-i18n="btn_apply_changes">▶
+                    Aplicar Cambios</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- First Time Warning / Ephemeral Warning -->
+    <div id="onboarding-modal" class="onboarding-overlay">
+        <div class="onboarding-card">
+            <div class="onboarding-icon">🚨</div>
+            <h2 data-i18n="modal_onboard_title">Advertencia Crítica de Almacenamiento</h2>
+            <p data-i18n="modal_onboard_p1">LifeOS es una aplicación de <strong>soberanía absoluta y cero
+                    confianza</strong>.
+                No hay nadie cosechando tus métricas y no hay base de datos corporativa.</p>
+            <p data-i18n="modal_onboard_p2">Todo tu horario y notas viven exclusivamente en este navegador (IndexedDB).
+            </p>
+            <div class="warning-box" data-i18n="modal_onboard_warning">
+                Si limpias la caché de tu navegador, usas un limpiador de sistema, o navegas en Incógnito, perderás
+                TODOS los datos permanentemente.<br><br>No hay recuperación de contraseña.
+            </div>
+            <div class="tip-box" data-i18n="modal_onboard_tip">
+                💡 <strong>La Solución:</strong> Usa el botón "💻 Sync JSON" (La Sincronia Dominical) situado arriba a
+                la derecha regularmente para
+                descargar un backup duro a tu PC físico.
+            </div>
+            <button id="onboarding-ok" class="btn-onboarding-ok" data-i18n="btn_onboard_ok">Entiendo, tomaré mis
+                medidas</button>
+        </div>
+    </div>
+
+    <div id="toast"
+        style="position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 20px; z-index: 2000; display: none;">
+    </div>
+
+    <script src="https://cdn.quilljs.com/1.3.6/quill.min.js"></script>
+    <script src="LifeOS-App-i18n.js"></script>
+    <script>
+        // --- IDB STORAGE WRAPPER ---
+        const idbStorage = {
+            db: null,
+            async initDB() {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open('LifeOS_DB', 1);
+                    request.onerror = (e) => reject("IndexedDB error: " + e.target.error);
+                    request.onsuccess = (e) => {
+                        this.db = e.target.result;
+                        resolve(this.db);
+                    };
+                    request.onupgradeneeded = (e) => {
+                        const db = e.target.result;
+                        if (!db.objectStoreNames.contains('store')) {
+                            db.createObjectStore('store');
+                        }
+                    };
+                });
+            },
+            async idbGet(key) {
+                return new Promise((resolve, reject) => {
+                    if (!this.db) return resolve(null);
+                    const transaction = this.db.transaction(['store'], 'readonly');
+                    const store = transaction.objectStore('store');
+                    const request = store.get(key);
+                    request.onsuccess = (e) => {
+                        let val = e.target.result;
+                        // Fallback to localStorage for smooth migration upgrade
+                        if (val === undefined) {
+                            const localVal = localStorage.getItem(key);
+                            if (localVal !== null && localVal !== "undefined") {
+                                try { val = JSON.parse(localVal); }
+                                catch (err) { val = localVal; }
+                                // Silently save it back to IDB
+                                this.idbSet(key, val);
+                            } else {
+                                val = null;
+                            }
+                        }
+                        resolve(val);
+                    };
+                    request.onerror = () => resolve(null);
+                });
+            },
+            async idbSet(key, value) {
+                return new Promise((resolve, reject) => {
+                    if (!this.db) return resolve();
+                    const transaction = this.db.transaction(['store'], 'readwrite');
+                    const store = transaction.objectStore('store');
+                    const request = store.put(value, key);
+                    request.onsuccess = () => resolve();
+                    request.onerror = () => reject("Set error");
+                });
+            }
+        };
+
+        // --- STATE MANAGEMENT (NEW COC LAYOUT ARCHITECTURE) ---
+        let savedCategories = {};
+        let savedNotes = {};
+        let savedEvents = [];
+        let savedPrompts = [];
+        let savedAIInstructions = {};
+
+        // NEW: The Core Game Changing Variables
+        let layouts = null;
+        let currentLayoutName = "Default";
+        let taskRegistry = {};
+        let savedState = {};
+
+        let calendarState;
+
+        const SCALE = 1.5;
+        const SNAP_MINS = 5;
+        const DAY_MINS = 1440;
+
+        let displayStartMins = 360;
+
+        // --- ASYNC BOOTLOADER ---
+        async function bootloader() {
+            try {
+                await idbStorage.initDB();
+
+                // Fetch all fundamental state concurrently
+                const [
+                    dbCategories, dbNotes, dbEvents, dbPrompts, dbAI,
+                    dbLayouts, dbCurrentLayout, dbRegistry, dbSavedState,
+                    dbDisplayStart, dbOnboardingDone
+                ] = await Promise.all([
+                    idbStorage.idbGet('lifeOsCategories'),
+                    idbStorage.idbGet('teacherDevOsNotes'),
+                    idbStorage.idbGet('lifeOsEvents'),
+                    idbStorage.idbGet('lifeOsPrompts'),
+                    idbStorage.idbGet('lifeOsAIInstructions'),
+                    idbStorage.idbGet('lifeOsLayouts'),
+                    idbStorage.idbGet('lifeOsCurrentLayout'),
+                    idbStorage.idbGet('lifeOsRegistry'),
+                    idbStorage.idbGet('teacherDevOsSavedState'),
+                    idbStorage.idbGet('lifeOsDisplayStartMins'),
+                    idbStorage.idbGet('lifeOsOnboardingDone')
+                ]);
+
+                // Assign fetched state or fallbacks
+                savedCategories = dbCategories || {};
+                savedNotes = dbNotes || {};
+                savedEvents = Array.isArray(dbEvents) ? dbEvents : [];
+                savedPrompts = dbPrompts || [
+                    { id: 'p-default-1', name: 'Analista de Productividad', prompt: 'Eres un analista de productividad experto. Analiza mis bloques de trabajo profundo ("deep work") y mis pausas. Identifica patrones, tiempos muertos, y oportunidades de mejora. Sé específico con datos de mi calendario.' },
+                    { id: 'p-default-2', name: 'Coach Brutal', prompt: 'Actúa como un coach de productividad extremadamente duro y sin filtros. Analiza mi horario semanal y "rostiza" mi agenda sin piedad. Señala excusas, tiempo desperdiciado, y falta de disciplina. Sé brutalmente honesto pero constructivo al final.' },
+                    { id: 'p-default-3', name: 'Planificador Semanal', prompt: 'Eres un planificador estratégico. Revisa mi calendario semanal completo y propón optimizaciones: reagrupación de tareas similares, mejor distribución de energía a lo largo del día, y sugerencias para bloques de descanso activo.' }
+                ];
+                savedAIInstructions = dbAI || {};
+
+                layouts = dbLayouts || null;
+                currentLayoutName = dbCurrentLayout || "Default";
+                taskRegistry = dbRegistry || {};
+                savedState = dbSavedState || {};
+
+                let pDisplayStart = parseInt(dbDisplayStart);
+                if (!isNaN(pDisplayStart)) displayStartMins = pDisplayStart;
+
+                // Backward Compatibility Migration (from v1 to CoC v2)
+                if (!layouts) {
+                    let legacyState = await idbStorage.idbGet('teacherDevOsCalendarState') || { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+                    layouts = { "Default": legacyState };
+                    currentLayoutName = "Default";
+                    calendarState = layouts[currentLayoutName];
+
+                    for (let d in calendarState) {
+                        calendarState[d].forEach(t => { if (!taskRegistry[t.name]) taskRegistry[t.name] = { type: t.type, dur: t.dur }; });
+                    }
+                    for (let n in savedNotes) {
+                        if (!taskRegistry[n]) taskRegistry[n] = { type: Object.keys(savedCategories)[0] || 'default', dur: 60 };
+                    }
+                } else {
+                    if (!layouts[currentLayoutName]) currentLayoutName = Object.keys(layouts)[0] || "Default";
+                    calendarState = layouts[currentLayoutName] || { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+                }
+
+                // Initial UI setups
+                const displayStartInput = document.getElementById('display-start-input');
+                if (displayStartInput) displayStartInput.value = formatTime(displayStartMins);
+
+                reInitApp();
+                setInterval(updateTimeLine, 60000);
+
+                // Onboarding Warning Logic
+                if (!dbOnboardingDone) {
+                    const modal = document.getElementById('onboarding-modal');
+                    modal.classList.add('show');
+                    document.getElementById('onboarding-ok').onclick = () => {
+                        idbStorage.idbSet('lifeOsOnboardingDone', 'true');
+                        modal.classList.remove('show');
+                    };
+                }
+
+            } catch (err) {
+                console.error("Boot sequence failed:", err);
+            }
+        }
+
+        let currentEditOriginalName = "";
+
+        // Multi-select & Group State
+        let isSelecting = false;
+        let selectionStart = { x: 0, y: 0 };
+        let selectedItems = new Set();
+
+        // --- CORE SAVE ENGINE ---
+        // Storage Capacity calculations are deprecated with IndexedDB
+        function calculateStorageUsage() {
+            const meter = document.getElementById('storage-meter');
+            if (!meter) return;
+            meter.innerText = `Storage: IndexedDB Active`;
+            meter.style.color = '#2ecc71';
+            meter.title = `IndexedDB handles significantly larger quotas seamlessly.`;
+        }
+
+        function pruneOrphanedNotes() {
+            const activeNames = new Set();
+            for (let lName in layouts) {
+                let stateToCheck = layouts[lName];
+                for (let day in stateToCheck) {
+                    stateToCheck[day].forEach(evt => activeNames.add(evt.name.trim()));
+                }
+            }
+
+            const orphanedNames = [];
+            for (let name in savedNotes) {
+                if (!activeNames.has(name)) {
+                    orphanedNames.push(name);
+                }
+            }
+
+            if (orphanedNames.length > 15) {
+                const excess = orphanedNames.length - 15;
+                const toDelete = orphanedNames.slice(0, excess);
+                toDelete.forEach(name => {
+                    delete savedNotes[name];
+                });
+            }
+        }
+
+        async function saveToStorage() {
+            pruneOrphanedNotes();
+
+            // Use structuredClone when possible, fallback to JSON parse/stringify if not supported
+            layouts[currentLayoutName] = typeof structuredClone === 'function' ? structuredClone(calendarState) : JSON.parse(JSON.stringify(calendarState));
+
+            try {
+                // Execute writes concurrently
+                await Promise.all([
+                    idbStorage.idbSet('lifeOsLayouts', layouts),
+                    idbStorage.idbSet('lifeOsCurrentLayout', currentLayoutName),
+                    idbStorage.idbSet('lifeOsRegistry', taskRegistry),
+                    idbStorage.idbSet('teacherDevOsSavedState', savedState),
+                    idbStorage.idbSet('teacherDevOsNotes', savedNotes),
+                    idbStorage.idbSet('lifeOsCategories', savedCategories),
+                    idbStorage.idbSet('lifeOsEvents', savedEvents),
+                    idbStorage.idbSet('lifeOsPrompts', savedPrompts),
+                    idbStorage.idbSet('lifeOsAIInstructions', savedAIInstructions)
+                ]);
+            } catch (err) {
+                console.error("Save failed", err);
+            }
+
+            calculateStorageUsage();
+        }
+
+        function updateTaskRegistry(name, type, dur) {
+            if (!name || name.trim() === "") return;
+            taskRegistry[name.trim()] = { type, dur };
+        }
+
+        function formatTime(absMins) {
+            let h = Math.floor(absMins / 60) % 24;
+            let m = absMins % 60;
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        }
+
+        function parseTime(timeString) {
+            if (!timeString) return 0;
+            const [h, m] = timeString.split(':').map(Number);
+            return (h * 60) + m;
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
+        }
+
+        // --- BYOAI ENGINE: AI Context Parser ---
+        function extractAIContext(taskName) {
+            // Primary: check dedicated AI instructions store
+            if (savedAIInstructions[taskName] && savedAIInstructions[taskName].trim()) {
+                return savedAIInstructions[taskName].trim();
+            }
+            // Fallback: parse notes for [AI] or AI Context: triggers
+            const html = savedNotes[taskName];
+            if (!html) return '';
+            const tmp = document.createElement('div');
+            tmp.innerHTML = html;
+            const text = tmp.textContent || tmp.innerText || '';
+            const triggers = ['AI Context:', '[AI]'];
+            for (const trigger of triggers) {
+                const idx = text.indexOf(trigger);
+                if (idx !== -1) return text.substring(idx + trigger.length).trim();
+            }
+            return '';
+        }
+
+        // --- LAYOUT SWITCHER UI ---
+        function updateLayoutDropdown() {
+            const sel = document.getElementById('layout-selector');
+            sel.innerHTML = '';
+            Object.keys(layouts).forEach(key => {
+                sel.innerHTML += `<option value="${key}" ${key === currentLayoutName ? 'selected' : ''}>${key}</option>`;
+            });
+        }
+
+        document.getElementById('layout-selector').addEventListener('change', (e) => {
+            layouts[currentLayoutName] = JSON.parse(JSON.stringify(calendarState));
+            currentLayoutName = e.target.value;
+            calendarState = JSON.parse(JSON.stringify(layouts[currentLayoutName]));
+            saveToStorage(); reInitApp();
+            showToast(`${t('toast_layout_switched')} ${currentLayoutName}`);
+        });
+
+        document.getElementById('new-layout-btn').onclick = () => {
+            document.getElementById('new-layout-name-input').value = "";
+            document.getElementById('new-layout-modal').classList.add('show');
+        };
+
+        document.getElementById('new-layout-cancel').onclick = () => document.getElementById('new-layout-modal').classList.remove('show');
+
+        document.getElementById('new-layout-save').onclick = () => {
+            const name = document.getElementById('new-layout-name-input').value.trim();
+            if (!name) return;
+            if (layouts[name]) { showToast(t('toast_layout_exists')); return; }
+
+            layouts[currentLayoutName] = JSON.parse(JSON.stringify(calendarState));
+            layouts[name] = { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] };
+            currentLayoutName = name;
+            calendarState = JSON.parse(JSON.stringify(layouts[currentLayoutName]));
+
+            updateLayoutDropdown(); saveToStorage(); reInitApp();
+            document.getElementById('new-layout-modal').classList.remove('show');
+            showToast(t('toast_layout_created'));
+        };
+
+        document.getElementById('duplicate-layout-btn').onclick = () => {
+            document.getElementById('duplicate-layout-current').innerText = currentLayoutName;
+            document.getElementById('duplicate-layout-name-input').value = currentLayoutName + " (Copia)";
+            document.getElementById('duplicate-layout-modal').classList.add('show');
+        };
+
+        document.getElementById('duplicate-layout-cancel').onclick = () => document.getElementById('duplicate-layout-modal').classList.remove('show');
+
+        document.getElementById('duplicate-layout-save').onclick = () => {
+            const newName = document.getElementById('duplicate-layout-name-input').value.trim();
+            if (!newName) return;
+            if (layouts[newName]) { showToast(t('toast_layout_exists')); return; }
+
+            layouts[currentLayoutName] = JSON.parse(JSON.stringify(calendarState));
+            let duplicatedState = JSON.parse(JSON.stringify(calendarState));
+            for (let d in duplicatedState) {
+                duplicatedState[d].forEach(task => { task.id = "task-" + Date.now() + Math.random().toString(36).substr(2, 5); });
+            }
+
+            layouts[newName] = duplicatedState;
+            currentLayoutName = newName;
+            calendarState = JSON.parse(JSON.stringify(layouts[currentLayoutName]));
+
+            updateLayoutDropdown(); saveToStorage(); reInitApp();
+            document.getElementById('duplicate-layout-modal').classList.remove('show');
+            showToast(`${t('toast_layout_duplicated')} '${newName}'`);
+        };
+
+        document.getElementById('rename-layout-btn').onclick = () => {
+            document.getElementById('rename-layout-current').innerText = currentLayoutName;
+            document.getElementById('rename-layout-name-input').value = currentLayoutName;
+            document.getElementById('rename-layout-modal').classList.add('show');
+        };
+
+        document.getElementById('rename-layout-cancel').onclick = () => document.getElementById('rename-layout-modal').classList.remove('show');
+
+        document.getElementById('rename-layout-save').onclick = () => {
+            const newName = document.getElementById('rename-layout-name-input').value.trim();
+            if (!newName || newName === currentLayoutName) return;
+            if (layouts[newName]) { showToast(t('toast_layout_name_in_use')); return; }
+
+            layouts[newName] = layouts[currentLayoutName];
+            delete layouts[currentLayoutName];
+            currentLayoutName = newName;
+
+            updateLayoutDropdown(); saveToStorage();
+            document.getElementById('rename-layout-modal').classList.remove('show');
+            showToast(`${t('toast_layout_renamed')} '${newName}'`);
+        };
+
+        document.getElementById('delete-layout-btn').onclick = () => {
+            if (Object.keys(layouts).length <= 1) { showToast(t('toast_layout_delete_last')); return; }
+            document.getElementById('delete-layout-target').innerText = currentLayoutName;
+            document.getElementById('delete-layout-confirm-modal').classList.add('show');
+        };
+
+        document.getElementById('delete-layout-confirm-cancel').onclick = () => document.getElementById('delete-layout-confirm-modal').classList.remove('show');
+
+        document.getElementById('delete-layout-confirm-yes').onclick = () => {
+            delete layouts[currentLayoutName];
+            currentLayoutName = Object.keys(layouts)[0];
+            calendarState = JSON.parse(JSON.stringify(layouts[currentLayoutName]));
+            updateLayoutDropdown(); saveToStorage(); reInitApp();
+            document.getElementById('delete-layout-confirm-modal').classList.remove('show');
+            showToast(t('toast_layout_deleted'));
+        };
+
+        document.getElementById('stash-all-btn').onclick = () => document.getElementById('stash-all-confirm-modal').classList.add('show');
+        document.getElementById('stash-all-confirm-cancel').onclick = () => document.getElementById('stash-all-confirm-modal').classList.remove('show');
+        document.getElementById('stash-all-confirm-yes').onclick = () => {
+            for (let d in calendarState) {
+                calendarState[d].forEach(evt => updateTaskRegistry(evt.name, evt.type, evt.dur));
+                calendarState[d] = [];
+            }
+            saveToStorage(); renderCalendar(); renderInventory();
+            document.getElementById('stash-all-confirm-modal').classList.remove('show');
+            showToast(t('toast_stash_all'));
+        };
+
+        // --- INVENTORY / STASH LOGIC ---
+        document.getElementById('inventory-btn').onclick = () => {
+            renderInventory();
+            document.getElementById('inventory-modal').classList.add('show');
+        };
+        document.getElementById('inventory-close').onclick = () => document.getElementById('inventory-modal').classList.remove('show');
+
+        function renderInventory() {
+            const list = document.getElementById('inventory-list');
+            list.innerHTML = '';
+
+            const activeNames = new Set();
+            for (let day in calendarState) {
+                calendarState[day].forEach(t => activeNames.add(t.name.trim()));
+            }
+
+            let empty = true;
+            for (let name in taskRegistry) {
+                if (activeNames.has(name)) continue;
+
+                empty = false;
+                const reg = taskRegistry[name];
+                const cat = savedCategories[reg.type] || { bg: '#ccc', text: '#333' };
+
+                const div = document.createElement('div');
+                div.className = 'inventory-item';
+                div.style.borderLeftColor = cat.bg;
+                div.innerHTML = `
+                <div class="inv-title">${name}</div>
+                <div class="inv-meta">
+                    <span style="background:${cat.bg}; color:${cat.text || '#fff'}; padding:2px 6px; border-radius:10px; font-weight:bold;">${reg.type}</span>
+                    <span>⏱️ ${reg.dur}m</span>
+                </div>
+            `;
+
+                div.onclick = () => spawnFromInventory(name);
+                list.appendChild(div);
+            }
+
+            if (empty) {
+                list.innerHTML = '<p style="color:#777; grid-column: 1 / -1;">Tu inventario está vacío para este layout.<br>Crea nuevas tareas con el botón ➕ o "Guarda" tareas existentes del calendario.</p>';
+            }
+        }
+
+        function spawnFromInventory(name) {
+            const reg = taskRegistry[name];
+            if (!reg) return;
+
+            document.getElementById('inventory-modal').classList.remove('show');
+            currentEditOriginalName = name;
+            document.getElementById('modal-error').style.display = 'none';
+            document.getElementById('modal-main-title').innerText = "Colocar Tarea del Inventario";
+            document.getElementById('modal-save').innerText = "Colocar en Calendario";
+
+            document.getElementById('modal-delete').style.display = 'none';
+            document.getElementById('modal-stash').style.display = 'none';
+            document.getElementById('modal-duplicate').style.display = 'none';
+
+            document.getElementById('modal-task-id').value = "";
+            document.getElementById('modal-task-name').value = name;
+            document.getElementById('name-status-indicator').innerHTML = `<span style="color: #e67e22;">🔗 Recuperando desde inventario.</span>`;
+
+            renderDynamicTypeDropdown('modal-task-type');
+            if (document.querySelector(`#modal-task-type option[value="${reg.type}"]`)) {
+                document.getElementById('modal-task-type').value = reg.type;
+            }
+
+            document.getElementById('modal-task-day').value = (new Date().getDay() + 6) % 7;
+            document.getElementById('modal-task-day').disabled = false;
+            document.getElementById('modal-start-time').value = formatTime(displayStartMins);
+            document.getElementById('modal-end-time').value = formatTime(displayStartMins + reg.dur);
+
+            modalQuill.root.innerHTML = savedNotes[name] || "";
+            // AI instructions for inventory spawn
+            const aiInst = savedAIInstructions[name] || '';
+            document.getElementById('modal-ai-instructions').value = aiInst;
+            document.getElementById('ai-instructions-container').style.display = aiInst ? 'block' : 'none';
+            document.getElementById('ai-toggle-arrow').style.transform = aiInst ? 'rotate(90deg)' : 'rotate(0deg)';
+            document.getElementById('ai-badge').style.display = aiInst ? 'inline' : 'none';
+            document.getElementById('note-modal').classList.add('show');
+        }
+
+        // --- NOTES MANAGER (GLOBAL DATABASE UPDATE) ---
+        document.getElementById('notes-manager-btn').onclick = openNotesManager;
+        document.getElementById('notes-manager-close').onclick = () => document.getElementById('notes-manager-modal').classList.remove('show');
+
+        function extractNotesDatabase() {
+            const activeNames = new Set();
+            layouts[currentLayoutName] = JSON.parse(JSON.stringify(calendarState));
+
+            for (let lName in layouts) {
+                let stateToCheck = layouts[lName];
+                for (let day in stateToCheck) {
+                    stateToCheck[day].forEach(evt => activeNames.add(evt.name.trim()));
+                }
+            }
+
+            const db = { active: [], orphaned: [] };
+            for (let name in savedNotes) {
+                const text = savedNotes[name];
+                if (activeNames.has(name)) { db.active.push({ name, text, status: 'active' }); activeNames.delete(name); }
+                else { db.orphaned.push({ name, text, status: 'orphaned' }); }
+            }
+            activeNames.forEach(name => { db.active.push({ name, text: "", status: 'active' }); });
+            db.active.sort((a, b) => a.name.localeCompare(b.name));
+            db.orphaned.sort((a, b) => a.name.localeCompare(b.name));
+            return db;
+        }
+
+        function renderNotesDatabaseList() {
+            const db = extractNotesDatabase();
+            const activeList = document.getElementById('nm-active-list');
+            const orphanedList = document.getElementById('nm-orphaned-list');
+            activeList.innerHTML = ''; orphanedList.innerHTML = '';
+            if (db.active.length === 0) activeList.innerHTML = '<div style="font-size:0.8rem; color:#888;">No hay tareas en ningún Layout.</div>';
+            if (db.orphaned.length === 0) orphanedList.innerHTML = '<div style="font-size:0.8rem; color:#888;">Tu base de datos está limpia.</div>';
+
+            const createCard = (item) => {
+                const div = document.createElement('div');
+                div.className = `nm-item ${item.status === 'active' ? 'active-item' : 'orphaned-item'}`;
+                div.dataset.name = item.name;
+                const tempDiv = document.createElement('div'); tempDiv.innerHTML = item.text || '';
+                const plainText = tempDiv.textContent || tempDiv.innerText || '';
+                const previewText = plainText ? plainText.substring(0, 40) + (plainText.length > 40 ? '...' : '') : '<span style="opacity:0.5; font-style:italic;">Sin contenido</span>';
+                div.innerHTML = `<div class="nm-item-title">${item.name}</div><div class="nm-item-preview">${previewText}</div>`;
+                div.onclick = () => {
+                    document.querySelectorAll('.nm-item').forEach(el => el.classList.remove('selected'));
+                    div.classList.add('selected'); openNotesManagerEditor(item.name, item.text, item.status);
+                };
+                return div;
+            };
+            db.active.forEach(item => activeList.appendChild(createCard(item)));
+            db.orphaned.forEach(item => orphanedList.appendChild(createCard(item)));
+        }
+
+        function openNotesManager() {
+            renderNotesDatabaseList();
+            document.getElementById('nm-editor-panel').style.visibility = 'hidden';
+            document.getElementById('notes-manager-modal').classList.add('show');
+        }
+
+        function openNotesManagerEditor(name, text, status) {
+            document.getElementById('nm-editor-panel').style.visibility = 'visible';
+            document.getElementById('nm-current-key').value = name;
+            document.getElementById('nm-current-status').value = status;
+            document.getElementById('nm-editor-title').value = name;
+            nmQuill.root.innerHTML = text || '';
+            const badge = document.getElementById('nm-editor-badge');
+            if (status === 'active') { badge.className = 'nm-badge active'; badge.innerText = 'EN USO (ACTIVA)'; }
+            else { badge.className = 'nm-badge orphaned'; badge.innerText = 'ARCHIVADA / SIN USO'; }
+        }
+
+        document.getElementById('nm-editor-save').onclick = () => {
+            const key = document.getElementById('nm-current-key').value;
+            let newText = nmQuill.root.innerHTML;
+            if (newText === '<p><br></p>') newText = '';
+            if (newText.trim() === '') delete savedNotes[key];
+            else savedNotes[key] = newText;
+            saveToStorage(); renderNotesDatabaseList();
+            const item = document.querySelector(`.nm-item[data-name="${key}"]`);
+            if (item) item.classList.add('selected');
+            showToast(t('toast_note_saved'));
+        };
+
+        document.getElementById('nm-editor-delete').onclick = () => {
+            const status = document.getElementById('nm-current-status').value;
+            if (status === 'active') { document.getElementById('note-delete-confirm-modal').classList.add('show'); }
+            else { executeNoteDelete(); }
+        };
+
+        document.getElementById('note-delete-confirm-cancel').onclick = () => document.getElementById('note-delete-confirm-modal').classList.remove('show');
+        document.getElementById('note-delete-confirm-yes').onclick = () => { document.getElementById('note-delete-confirm-modal').classList.remove('show'); executeNoteDelete(); };
+
+        function executeNoteDelete() {
+            const key = document.getElementById('nm-current-key').value;
+            delete savedNotes[key]; saveToStorage(); renderNotesDatabaseList();
+            document.getElementById('nm-editor-panel').style.visibility = 'hidden';
+            showToast(t('toast_note_deleted'));
+        }
+
+        // --- BYOAI ENGINE: PROMPT MANAGER ---
+        document.getElementById('prompts-btn').onclick = openPromptManager;
+        document.getElementById('pm-close').onclick = () => document.getElementById('prompt-manager-modal').classList.remove('show');
+
+        function openPromptManager() {
+            renderPromptList();
+            document.getElementById('pm-editor-panel').style.visibility = 'hidden';
+            document.getElementById('prompt-manager-modal').classList.add('show');
+        }
+
+        function renderPromptList() {
+            const list = document.getElementById('pm-prompt-list');
+            list.innerHTML = '';
+            if (savedPrompts.length === 0) {
+                list.innerHTML = '<div style="color:#888; font-size:0.85rem; text-align:center; padding: 20px;">No tienes prompts. Crea uno con el botón de abajo.</div>';
+                return;
+            }
+            savedPrompts.forEach(p => {
+                const div = document.createElement('div');
+                div.className = 'pm-item';
+                div.dataset.id = p.id;
+                const preview = p.prompt ? p.prompt.substring(0, 50) + (p.prompt.length > 50 ? '...' : '') : '<span style="opacity:0.5; font-style:italic;">Sin instrucciones</span>';
+                div.innerHTML = `<div class="pm-item-name">${p.name}</div><div class="pm-item-preview">${preview}</div>`;
+                div.onclick = () => {
+                    document.querySelectorAll('.pm-item').forEach(el => el.classList.remove('selected'));
+                    div.classList.add('selected');
+                    selectPrompt(p.id);
+                };
+                list.appendChild(div);
+            });
+        }
+
+        function selectPrompt(id) {
+            const prompt = savedPrompts.find(p => p.id === id);
+            if (!prompt) return;
+            document.getElementById('pm-editor-panel').style.visibility = 'visible';
+            document.getElementById('pm-current-id').value = id;
+            document.getElementById('pm-editor-name').value = prompt.name;
+            document.getElementById('pm-editor-text').value = prompt.prompt;
+        }
+
+        document.getElementById('pm-editor-save').onclick = () => {
+            const id = document.getElementById('pm-current-id').value;
+            const prompt = savedPrompts.find(p => p.id === id);
+            if (!prompt) return;
+            prompt.name = document.getElementById('pm-editor-name').value.trim() || t('prompt_unnamed');
+            prompt.prompt = document.getElementById('pm-editor-text').value;
+            saveToStorage(); renderPromptList();
+            const item = document.querySelector(`.pm-item[data-id="${id}"]`);
+            if (item) item.classList.add('selected');
+            showToast(t('toast_prompt_saved'));
+        };
+
+        document.getElementById('pm-btn-delete').onclick = () => {
+            const id = document.getElementById('pm-current-id').value;
+            savedPrompts = savedPrompts.filter(p => p.id !== id);
+            saveToStorage(); renderPromptList();
+            document.getElementById('pm-editor-panel').style.visibility = 'hidden';
+            showToast(t('toast_prompt_deleted'));
+        };
+
+        document.getElementById('pm-btn-new').onclick = () => {
+            const newPrompt = { id: 'p-' + Date.now(), name: t('prompt_new'), prompt: '' };
+            savedPrompts.push(newPrompt);
+            saveToStorage(); renderPromptList();
+            selectPrompt(newPrompt.id);
+            const item = document.querySelector(`.pm-item[data-id="${newPrompt.id}"]`);
+            if (item) item.classList.add('selected');
+            document.getElementById('pm-editor-name').focus();
+            showToast(t('toast_prompt_created'));
+        };
+
+        // --- BYOAI ENGINE: SMART EXPORTER ---
+        document.getElementById('pm-editor-run').onclick = () => {
+            const id = document.getElementById('pm-current-id').value;
+            executePrompt(id);
+        };
+
+        function executePrompt(promptId) {
+            const prompt = savedPrompts.find(p => p.id === promptId);
+            if (!prompt) { showToast(t('toast_prompt_select_first')); return; }
+
+            // Save current edits before exporting
+            prompt.name = document.getElementById('pm-editor-name').value.trim() || prompt.name;
+            prompt.prompt = document.getElementById('pm-editor-text').value;
+            saveToStorage();
+
+            const dayNames = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+            let taskLines = [];
+            let taskCount = 0;
+
+            for (let day = 0; day < 7; day++) {
+                const tasks = calendarState[day];
+                if (!tasks || tasks.length === 0) continue;
+
+                const sorted = [...tasks].sort((a, b) => a.start - b.start);
+                sorted.forEach(t => {
+                    taskCount++;
+                    const catLabel = savedCategories[t.type]?.label || t.type;
+                    const startTime = formatTime(t.start);
+                    const endTime = formatTime((t.start + t.dur) % 1440);
+                    const durH = Math.floor(t.dur / 60);
+                    const durM = t.dur % 60;
+                    const durStr = durH > 0 ? `${durH}h${durM > 0 ? durM + 'm' : ''}` : `${durM}m`;
+                    const completed = savedState[t.id] ? ' ✅' : '';
+
+                    let line = `- ${dayNames[day]} | ${startTime}-${endTime} (${durStr}) | [${catLabel}] ${t.name}${completed}`;
+
+                    const aiCtx = extractAIContext(t.name);
+                    if (aiCtx) line += `\n  └─ AI Context: ${aiCtx}`;
+
+                    taskLines.push(line);
+                });
+            }
+
+            // Build full JSON (same as terminal/System Sync) for complete AI context
+            const fullJSON = buildFullJSON();
+
+            const output = [
+                '=== ' + t('prompt_export_system') + ' ===',
+                prompt.prompt,
+                '',
+                `=== ${t('prompt_export_calendar')} "${currentLayoutName}" (${taskCount} ${t('prompt_export_tasks')}) ===`,
+                '',
+                ...taskLines,
+                '',
+                '=== ' + t('prompt_export_json_full') + ' ===',
+                fullJSON,
+                '',
+                '=== ' + t('prompt_export_end') + ' ==='
+            ].join('\n');
+
+            navigator.clipboard.writeText(output).then(() => {
+                document.getElementById('prompt-manager-modal').classList.remove('show');
+                showToast(t('toast_prompt_copied'));
+            }).catch(() => {
+                // Fallback for older browsers
+                const ta = document.createElement('textarea');
+                ta.value = output; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+                document.getElementById('prompt-manager-modal').classList.remove('show');
+                showToast(t('toast_prompt_copied'));
+            });
+        }
+
+        // --- DATE LOGIC ENGINE (Real World Matcher) ---
+        function parseLocalDate(dateStr) { const [y, m, d] = dateStr.split('-').map(Number); return new Date(y, m - 1, d); }
+        function isEventOnDate(evt, targetDateStr) {
+            if (!evt.repeatConfig) return evt.date === targetDateStr;
+            if (targetDateStr < evt.date) return false;
+            const baseDate = parseLocalDate(evt.date); const targetDate = parseLocalDate(targetDateStr);
+            const interval = parseInt(evt.repeatConfig.interval, 10) || 1; const unit = evt.repeatConfig.unit;
+            if (unit === 'days') { const diffDays = Math.round((targetDate - baseDate) / (1000 * 60 * 60 * 24)); return diffDays % interval === 0; }
+            if (unit === 'weeks') { const diffDays = Math.round((targetDate - baseDate) / (1000 * 60 * 60 * 24)); return diffDays % (interval * 7) === 0; }
+            if (unit === 'months') { if (baseDate.getDate() !== targetDate.getDate()) return false; const diffMonths = (targetDate.getFullYear() - baseDate.getFullYear()) * 12 + (targetDate.getMonth() - baseDate.getMonth()); return diffMonths % interval === 0; }
+            if (unit === 'years') { if (baseDate.getDate() !== targetDate.getDate() || baseDate.getMonth() !== targetDate.getMonth()) return false; const diffYears = targetDate.getFullYear() - baseDate.getFullYear(); return diffYears % interval === 0; }
+            return false;
+        }
+        function formatRepeatText(config) { if (!config) return ""; const unitMap = { days: "día(s)", weeks: "semana(s)", months: "mes(es)", years: "año(s)" }; return `🔄 Cada ${config.interval} ${unitMap[config.unit]}`; }
+        function getCurrentWeekDates() {
+            const today = new Date(); const currentDay = today.getDay(); const diffToMonday = currentDay === 0 ? -6 : 1 - currentDay;
+            const monday = new Date(today); monday.setDate(today.getDate() + diffToMonday);
+            const weekDates = [];
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday); d.setDate(monday.getDate() + i);
+                weekDates.push({ date: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'), dayNum: String(d.getDate()).padStart(2, '0') });
+            }
+            return weekDates;
+        }
+
+        function renderWeekHeadersAndEvents() {
+            const dayNames = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+            const currentWeek = getCurrentWeekDates();
+            for (let i = 0; i < 7; i++) {
+                const headerObj = document.getElementById(`dh-${i}`);
+                headerObj.innerHTML = `<div style="padding-bottom: 5px;">${dayNames[i]} ${currentWeek[i].dayNum}</div>`;
+                const daysEvents = savedEvents.filter(e => isEventOnDate(e, currentWeek[i].date));
+                if (daysEvents.length > 0) {
+                    const bubblesContainer = document.createElement('div');
+                    bubblesContainer.style.cssText = "display: flex; flex-direction: column; gap: 4px; padding: 0 4px 4px 4px;";
+                    daysEvents.forEach(evt => {
+                        const bubble = document.createElement('div'); bubble.className = `event-bubble`;
+                        const cat = savedCategories[evt.type] || { bg: '#ccc', text: '#333', border: '#999' };
+                        bubble.style.backgroundColor = cat.bg; bubble.style.color = cat.text || '#1C2833'; bubble.style.border = `1px solid ${cat.border}`;
+                        bubble.innerText = evt.title; bubble.title = evt.title;
+                        bubble.onclick = (e) => { e.stopPropagation(); openEventEditor(evt); };
+                        bubblesContainer.appendChild(bubble);
+                    });
+                    headerObj.appendChild(bubblesContainer);
+                }
+            }
+        }
+
+        const displayStartInput = document.getElementById('display-start-input');
+        displayStartInput.value = formatTime(displayStartMins);
+        displayStartInput.addEventListener('change', (e) => {
+            if (e.target.value) { displayStartMins = parseTime(e.target.value); idbStorage.idbSet('lifeOsDisplayStartMins', displayStartMins); renderCalendar(); }
+        });
+
+        function renderDynamicStyles() {
+            let styleTag = document.getElementById('dynamic-category-styles');
+            if (!styleTag) { styleTag = document.createElement('style'); styleTag.id = 'dynamic-category-styles'; document.head.appendChild(styleTag); }
+            let css = '';
+            for (let key in savedCategories) {
+                const cat = savedCategories[key];
+                css += `.event.${key} { background-color: ${cat.bg}; border-left: 4px solid rgba(0,0,0,0.15); color: ${cat.text || "#1C2833"}; } .event.${key} .time { opacity: 0.8; }`;
+            }
+            styleTag.innerHTML = css;
+        }
+
+        function renderDynamicLegend() {
+            const legendContainer = document.getElementById('dynamic-legend'); legendContainer.innerHTML = '';
+            const displayKeys = Object.keys(savedCategories);
+            if (displayKeys.length === 0) { legendContainer.innerHTML = '<span style="color: #e74c3c; font-weight: bold; font-size: 0.85rem;">⚠️ No hay Leyendas. Usa el botón "Configurar Leyendas" para iniciar.</span>'; return; }
+            displayKeys.forEach(key => {
+                const cat = savedCategories[key]; const item = document.createElement('div'); item.className = 'legend-item';
+                item.innerHTML = `<div class="legend-color" style="background: ${cat.bg}; border-color: rgba(0,0,0,0.15);"></div> ${cat.label}`;
+                legendContainer.appendChild(item);
+            });
+        }
+
+        function renderDynamicTypeDropdown(selectId) {
+            const select = document.getElementById(selectId); select.innerHTML = '';
+            const keys = Object.keys(savedCategories);
+            if (keys.length === 0) { select.innerHTML = `<option value="" disabled selected>⚠️ Primero Configura una Leyenda</option>`; }
+            else { keys.forEach(key => { select.innerHTML += `<option value="${key}">${savedCategories[key].label}</option>`; }); }
+            return keys.length > 0;
+        }
+
+        document.getElementById('events-btn').onclick = openEventManager;
+        function openEventManager() { renderEventManagerList(); document.getElementById('events-manager-modal').classList.add('show'); }
+        function renderEventManagerList() {
+            const list = document.getElementById('events-manager-list'); list.innerHTML = '';
+            const sorted = [...savedEvents].sort((a, b) => new Date(a.date) - new Date(b.date));
+            const todayStr = new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0') + '-' + String(new Date().getDate()).padStart(2, '0');
+            if (sorted.length === 0) { list.innerHTML = '<p style="color:#7f8c8d; text-align:center; margin: 30px 0;">No tienes eventos programados.</p>'; return; }
+            sorted.forEach(evt => {
+                const div = document.createElement('div'); const isPast = evt.date < todayStr;
+                div.style.cssText = `display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee; background: #fff; ${isPast && !evt.repeatConfig ? 'opacity: 0.5;' : ''}`;
+                const cat = savedCategories[evt.type] || { bg: '#ccc', label: 'Sin categoría' };
+                div.innerHTML = `<div style="flex: 1; overflow: hidden;"><strong style="display:block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${evt.title}</strong><span style="font-size: 0.8rem; color: #7f8c8d; display: flex; align-items: center; gap: 5px;">📅 ${evt.date} • <span style="display:inline-block; width:10px; height:10px; border-radius:50%; background:${cat.bg}; border: 1px solid rgba(0,0,0,0.1)"></span> ${cat.label} ${formatRepeatText(evt.repeatConfig) ? '• <span style="color:#2980b9; font-weight:bold;">' + formatRepeatText(evt.repeatConfig) + '</span>' : ''}</span></div><button style="background:#f8f9fa; border:1px solid #ddd; border-radius: 6px; cursor:pointer; font-size:1.1rem; padding: 6px 10px; transition: background 0.2s;">✏️</button>`;
+                div.querySelector('button').onclick = () => openEventEditor(evt);
+                list.appendChild(div);
+            });
+        }
+
+        document.getElementById('events-manager-close').onclick = () => document.getElementById('events-manager-modal').classList.remove('show');
+        document.getElementById('events-manager-new').onclick = () => openEventEditor(null);
+        document.getElementById('special-event-cancel').onclick = () => document.getElementById('special-event-modal').classList.remove('show');
+
+        function openEventEditor(evt = null) {
+            document.getElementById('events-manager-modal').classList.remove('show');
+            const isNew = !evt; renderDynamicTypeDropdown('special-event-type');
+            const repeatToggle = document.getElementById('special-event-repeat-toggle');
+            const repeatConfigDiv = document.getElementById('special-event-repeat-config');
+            repeatToggle.onchange = (e) => { repeatConfigDiv.style.display = e.target.checked ? 'block' : 'none'; };
+
+            if (isNew) {
+                document.getElementById('special-event-id').value = ''; document.getElementById('special-event-title').value = '';
+                document.getElementById('special-event-date').value = new Date().getFullYear() + '-' + String(new Date().getMonth() + 1).padStart(2, '0') + '-' + String(new Date().getDate()).padStart(2, '0');
+                if (Object.keys(savedCategories).length > 0) document.getElementById('special-event-type').value = Object.keys(savedCategories)[0];
+                repeatToggle.checked = false; repeatConfigDiv.style.display = 'none';
+                document.getElementById('special-event-delete').style.display = 'none'; document.getElementById('special-event-modal-title').innerText = 'Nuevo Evento Especial';
+            } else {
+                document.getElementById('special-event-id').value = evt.id; document.getElementById('special-event-title').value = evt.title;
+                document.getElementById('special-event-date').value = evt.date; if (savedCategories[evt.type]) document.getElementById('special-event-type').value = evt.type;
+                if (evt.repeatConfig) { repeatToggle.checked = true; repeatConfigDiv.style.display = 'flex'; document.getElementById('special-event-repeat-interval').value = evt.repeatConfig.interval; document.getElementById('special-event-repeat-unit').value = evt.repeatConfig.unit; }
+                else { repeatToggle.checked = false; repeatConfigDiv.style.display = 'none'; }
+                document.getElementById('special-event-delete').style.display = 'block'; document.getElementById('special-event-modal-title').innerText = 'Editar Evento Especial';
+            }
+            document.getElementById('special-event-modal').classList.add('show');
+        }
+
+        document.getElementById('special-event-save').onclick = () => {
+            const id = document.getElementById('special-event-id').value; const title = document.getElementById('special-event-title').value.trim();
+            const date = document.getElementById('special-event-date').value; const type = document.getElementById('special-event-type').value;
+            let repeatConfig = null;
+            if (document.getElementById('special-event-repeat-toggle').checked) { repeatConfig = { interval: parseInt(document.getElementById('special-event-repeat-interval').value, 10) || 1, unit: document.getElementById('special-event-repeat-unit').value }; }
+
+            if (!title || !date || !type) return showToast(t('toast_missing_data'));
+            if (id) { const evt = savedEvents.find(e => e.id === id); if (evt) { evt.title = title; evt.date = date; evt.type = type; evt.repeatConfig = repeatConfig; } }
+            else { savedEvents.push({ id: 'sp-evt-' + Date.now(), title, date, type, repeatConfig }); }
+
+            saveToStorage(); renderWeekHeadersAndEvents(); document.getElementById('special-event-modal').classList.remove('show'); openEventManager(); showToast(t('toast_event_saved'));
+        };
+
+        document.getElementById('special-event-delete').onclick = () => {
+            savedEvents = savedEvents.filter(e => e.id !== document.getElementById('special-event-id').value);
+            saveToStorage(); renderWeekHeadersAndEvents(); document.getElementById('special-event-modal').classList.remove('show'); openEventManager(); showToast(t('toast_event_deleted'));
+        };
+
+        document.getElementById('edit-legends-btn').onclick = () => {
+            const list = document.getElementById('legend-list'); list.innerHTML = '';
+            for (let key in savedCategories) list.appendChild(createLegendRow(key, savedCategories[key].label, savedCategories[key].bg, savedCategories[key].text));
+            document.getElementById('legend-modal').classList.add('show');
+        };
+
+        function createLegendRow(key, label, bg, text) {
+            const div = document.createElement('div');
+            div.style.cssText = "display: flex; gap: 10px; margin-bottom: 10px; align-items: center; padding: 10px; background: #fff; border: 1px solid #eee; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.02);";
+            div.innerHTML = `<input type="hidden" class="leg-key" value="${key}"><input type="text" class="leg-label" value="${label}" placeholder="Nombre" style="flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; outline:none;"><input type="color" class="leg-bg" value="${bg}" style="width: 35px; height: 35px; padding: 0; border: none; cursor: pointer;"><input type="color" class="leg-text" value="${text || '#1C2833'}" style="width: 35px; height: 35px; padding: 0; border: none; cursor: pointer;"><button class="leg-delete" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.2rem;">✖</button>`;
+            div.querySelector('.leg-delete').onclick = () => div.remove(); return div;
+        }
+
+        document.getElementById('add-legend-btn').onclick = () => document.getElementById('legend-list').appendChild(createLegendRow('cat_' + Date.now().toString(36), 'Nueva Categoría', '#A3E4D7', '#1C2833'));
+        document.getElementById('legend-cancel').onclick = () => document.getElementById('legend-modal').classList.remove('show');
+
+        document.getElementById('legend-save').onclick = () => {
+            const newCats = {};
+            document.querySelectorAll('#legend-list > div').forEach(row => { newCats[row.querySelector('.leg-key').value] = { label: row.querySelector('.leg-label').value.trim() || 'Sin Nombre', bg: row.querySelector('.leg-bg').value, border: row.querySelector('.leg-bg').value, text: row.querySelector('.leg-text').value }; });
+            savedCategories = newCats; saveToStorage(); reInitApp(); document.getElementById('legend-modal').classList.remove('show'); showToast(t('toast_legends_updated'));
+        };
+
+        function clearSelection() { selectedItems.clear(); document.querySelectorAll('.event.selected-group').forEach(el => el.classList.remove('selected-group')); }
+
+        document.getElementById('calendar-wrapper').addEventListener('mousedown', (e) => {
+            if (e.target.closest('.event') || e.target.closest('.edit-note') || e.target.closest('.resize-handle') || e.target.closest('.event-bubble') || e.target.closest('.day-header')) return;
+            isSelecting = true; selectionStart = { x: e.clientX, y: e.clientY }; if (!e.shiftKey) clearSelection();
+        });
+
+        function renderCalendar() {
+            let timeColHTML = '';
+            for (let i = 0; i <= 24; i++) {
+                let absMins = displayStartMins + (i * 60); let h = Math.floor(absMins / 60) % 24; let crossesMidnight = absMins >= 1440 && absMins < (displayStartMins + 1440);
+                let label = String(h).padStart(2, '0') + ':00'; let style = '';
+                if (crossesMidnight && i !== 24) { style = 'color: #95a5a6; font-weight: bold;'; label += ' <span style="font-size:0.6rem; opacity:0.6;">+1d</span>'; }
+                timeColHTML += `<div class="time-slot" style="top: ${i * 60 * 1.5}px; ${style}">${label}</div>`;
+            }
+            document.getElementById('time-col-render').innerHTML = timeColHTML;
+
+            document.querySelectorAll('.day-col').forEach(col => {
+                col.innerHTML = ''; let midPx = (1440 - displayStartMins) % 1440 * SCALE;
+                col.style.background = midPx === 0 ? '#fff' : `linear-gradient(to bottom, transparent ${midPx}px, rgba(44, 62, 80, 0.05) ${midPx}px)`;
+            });
+
+            for (let day in calendarState) {
+                calendarState[day].forEach(eventData => {
+                    let vStart = (eventData.start - displayStartMins + DAY_MINS) % DAY_MINS;
+                    const createBlock = (isGhost) => {
+                        const el = document.createElement('div'); el.className = `event ${eventData.type}`;
+                        if (savedState[eventData.id]) el.classList.add('completed');
+                        if (selectedItems.has(eventData.id)) el.classList.add('selected-group');
+                        el.style.setProperty('--visual-start', vStart); el.style.setProperty('--dur', eventData.dur); el.style.setProperty('--ghost-offset', isGhost ? -DAY_MINS : 0);
+                        el.dataset.id = eventData.id; el.dataset.day = day;
+                        el.innerHTML = `<div class="time">${formatTime(eventData.start)} - ${formatTime((eventData.start + eventData.dur) % DAY_MINS)}</div><div class="title">${eventData.name}</div>`;
+
+                        el.addEventListener('click', (e) => {
+                            if (e.target.classList.contains('edit-note') || e.target.classList.contains('resize-handle') || el.dataset.wasDragged === 'true') return;
+                            clearSelection(); document.querySelectorAll(`.event[data-id="${eventData.id}"]`).forEach(n => n.classList.toggle('completed'));
+                            if (el.classList.contains('completed')) savedState[eventData.id] = true; else delete savedState[eventData.id];
+                            saveToStorage(); updateProgress(); updateTimeLine();
+                        });
+
+                        const aiIcon = document.createElement('span'); aiIcon.className = 'ai-indicator'; aiIcon.innerHTML = '🤖';
+                        if (extractAIContext(eventData.name.trim())) aiIcon.classList.add('has-ai');
+                        aiIcon.title = 'Tiene instrucciones AI'; el.appendChild(aiIcon);
+
+                        const pencil = document.createElement('span'); pencil.className = 'edit-note'; pencil.innerHTML = '✏️';
+                        if (savedNotes[eventData.name.trim()]?.trim()) pencil.classList.add('has-note');
+                        pencil.addEventListener('click', (e) => { e.stopPropagation(); openBlockEditModal(eventData, day); }); el.appendChild(pencil);
+
+                        const resizer = document.createElement('div'); resizer.className = 'resize-handle'; el.appendChild(resizer);
+                        setupInteractions(el, eventData, day, resizer); return el;
+                    };
+                    document.querySelector(`.day-col[data-day="${day}"]`).appendChild(createBlock(false));
+                    if (vStart + eventData.dur > DAY_MINS) document.querySelector(`.day-col[data-day="${day}"]`).appendChild(createBlock(true));
+                });
+            }
+            updateTimeLine(); updateProgress();
+        }
+
+        function isCollisionAdvanced(s1, d1, dayIndex, ignoreIdsSet) {
+            let e1 = s1 + d1;
+            for (let evt of calendarState[dayIndex]) {
+                if (ignoreIdsSet && ignoreIdsSet.has(evt.id)) continue;
+                let s2 = evt.start, d2 = evt.dur, e2 = s2 + d2;
+                let s1_in_2 = (e2 <= DAY_MINS) ? (s1 >= s2 && s1 < e2) : (s1 >= s2 || s1 < (e2 % DAY_MINS));
+                let s2_in_1 = (e1 <= DAY_MINS) ? (s2 >= s1 && s2 < e1) : (s2 >= s1 || s2 < (e1 % DAY_MINS));
+                if (s1 === s2 || s1_in_2 || s2_in_1) return true;
+            }
+            return false;
+        }
+
+        function isCollision(s1, d1, dayIndex, ignoreId) {
+            let set = new Set(); if (ignoreId && ignoreId !== 'new') set.add(ignoreId);
+            return isCollisionAdvanced(s1, d1, dayIndex, set);
+        }
+
+        let activeDrag = null;
+        function getColumnByX(clientX) {
+            const cols = document.querySelectorAll('.day-col');
+            for (let i = 0; i < cols.length; i++) { if (clientX >= cols[i].getBoundingClientRect().left && clientX <= cols[i].getBoundingClientRect().right) return cols[i].dataset.day; }
+            return null;
+        }
+
+        function setupInteractions(el, data, day, resizer) {
+            const onDown = (e, resize = false) => {
+                if (!resize && e.target.classList.contains('edit-note')) return;
+                if (!selectedItems.has(data.id)) { clearSelection(); selectedItems.add(data.id); document.querySelectorAll(`.event[data-id="${data.id}"]`).forEach(n => n.classList.add('selected-group')); }
+                activeDrag = { isResizing: resize, startY: e.touches ? e.touches[0].clientY : e.clientY, startX: e.touches ? e.touches[0].clientX : e.clientX, threshold: false, primaryId: data.id, items: [], groupIsColliding: false };
+                selectedItems.forEach(id => {
+                    let itemData, itemDay;
+                    for (let d in calendarState) { let found = calendarState[d].find(ev => ev.id === id); if (found) { itemData = found; itemDay = parseInt(d); break; } }
+                    if (itemData) activeDrag.items.push({ id: id, data: itemData, els: Array.from(document.querySelectorAll(`.event[data-id="${id}"]`)), originalDay: itemDay, currentDay: itemDay, initialVisualS: (itemData.start - displayStartMins + DAY_MINS) % DAY_MINS, initialD: itemData.dur, dummyEls: [], newAbsStart: 0, newDur: itemData.dur, newDay: itemDay });
+                });
+            };
+            el.addEventListener('mousedown', (e) => onDown(e)); el.addEventListener('touchstart', (e) => onDown(e), { passive: true });
+            resizer.addEventListener('mousedown', (e) => { e.stopPropagation(); onDown(e, true); }); resizer.addEventListener('touchstart', (e) => { e.stopPropagation(); onDown(e, true); }, { passive: true });
+        }
+
+        const onGlobalMove = (e) => {
+            const clientX = e.touches ? e.touches[0].clientX : e.clientX, clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            if (isSelecting) {
+                const marquee = document.getElementById('selection-marquee');
+                const left = Math.min(selectionStart.x, clientX), top = Math.min(selectionStart.y, clientY), width = Math.abs(clientX - selectionStart.x), height = Math.abs(clientY - selectionStart.y);
+                marquee.style.cssText = `display: block; left: ${left}px; top: ${top}px; width: ${width}px; height: ${height}px;`;
+                const rect = { left, top, right: left + width, bottom: top + height };
+                selectedItems.clear();
+                document.querySelectorAll('.event').forEach(el => {
+                    const elRect = el.getBoundingClientRect();
+                    if (!(rect.right < elRect.left || rect.left > elRect.right || rect.bottom < elRect.top || rect.top > elRect.bottom)) { selectedItems.add(el.dataset.id); el.classList.add('selected-group'); }
+                    else { el.classList.remove('selected-group'); }
+                }); return;
+            }
+
+            if (!activeDrag) return;
+            const deltaY = clientY - activeDrag.startY;
+            if (Math.abs(deltaY) > 3 || Math.abs(clientX - activeDrag.startX) > 10) {
+                activeDrag.threshold = true; const deltaM = Math.round((deltaY / SCALE) / SNAP_MINS) * SNAP_MINS;
+                let primaryItem = activeDrag.items.find(i => i.id === activeDrag.primaryId);
+                let targetDayPrimary = primaryItem.originalDay;
+                if (!activeDrag.isResizing) { const hoverDay = getColumnByX(clientX); if (hoverDay !== null) targetDayPrimary = parseInt(hoverDay); }
+                let deltaDay = targetDayPrimary - primaryItem.originalDay, groupIsColliding = false;
+
+                activeDrag.items.forEach(item => {
+                    item.newAbsStart = activeDrag.isResizing ? item.initialVisualS : (item.initialVisualS + deltaM + DAY_MINS) % DAY_MINS;
+                    item.newDur = activeDrag.isResizing ? Math.max(15, Math.min(DAY_MINS, item.initialD + deltaM)) : item.initialD;
+                    item.newDay = (item.originalDay + deltaDay + 7) % 7;
+                    if (isCollisionAdvanced((item.newAbsStart + displayStartMins) % 1440, item.newDur, item.newDay, (e.altKey && !activeDrag.isResizing) ? new Set() : selectedItems)) groupIsColliding = true;
+                });
+
+                activeDrag.groupIsColliding = groupIsColliding;
+
+                activeDrag.items.forEach(item => {
+                    if (activeDrag.isResizing) item.els.forEach(n => n.style.setProperty('--dur', item.newDur));
+                    else {
+                        item.els.forEach(n => n.style.setProperty('--visual-start', item.newAbsStart));
+                        if (item.currentDay !== item.newDay) { let col = document.querySelector(`.day-col[data-day="${item.newDay}"]`); if (col) item.els.forEach(el => col.appendChild(el)); item.currentDay = item.newDay; }
+                        if (e.altKey && item.dummyEls.length === 0) {
+                            item.els.forEach(el => { let dummy = el.cloneNode(true); dummy.style.opacity = '0.4'; dummy.style.pointerEvents = 'none'; dummy.style.setProperty('--visual-start', item.initialVisualS); document.querySelector(`.day-col[data-day="${item.originalDay}"]`).appendChild(dummy); item.dummyEls.push(dummy); });
+                        } else if (!e.altKey && item.dummyEls.length > 0) { item.dummyEls.forEach(d => d.remove()); item.dummyEls = []; }
+                    }
+                    item.els.forEach(el => groupIsColliding ? el.classList.add('drag-collision') : el.classList.remove('drag-collision'));
+                });
+            }
+        };
+
+        const onGlobalUp = (e) => {
+            if (isSelecting) { isSelecting = false; document.getElementById('selection-marquee').style.display = 'none'; return; }
+            if (!activeDrag) return;
+
+            if (activeDrag.threshold) {
+                activeDrag.items.forEach(i => i.els.forEach(el => { el.dataset.wasDragged = 'true'; setTimeout(() => { if (el) el.dataset.wasDragged = 'false'; }, 100); }));
+                let wasDuplicating = e.altKey && !activeDrag.isResizing;
+                activeDrag.items.forEach(i => { i.dummyEls.forEach(d => d.remove()); i.dummyEls = []; });
+
+                if (activeDrag.groupIsColliding) { showToast(t('toast_collision')); renderCalendar(); }
+                else {
+                    activeDrag.items.forEach(item => {
+                        const absStart = (item.newAbsStart + displayStartMins) % 1440;
+                        if (wasDuplicating) calendarState[item.newDay].push({ id: "task-" + Date.now() + Math.random().toString(36).substr(2, 5), name: item.data.name, type: item.data.type, start: absStart, dur: item.newDur });
+                        else {
+                            if (item.originalDay !== item.newDay) { calendarState[item.originalDay] = calendarState[item.originalDay].filter(evt => evt.id !== item.data.id); calendarState[item.newDay].push(item.data); }
+                            item.data.start = absStart; item.data.dur = item.newDur;
+                        }
+                    });
+                    if (wasDuplicating) showToast(t('toast_group_duplicated')); saveToStorage(); renderCalendar();
+                }
+            } else activeDrag.items.forEach(i => { i.dummyEls.forEach(d => d.remove()); i.dummyEls = []; });
+            activeDrag = null;
+        };
+
+        document.addEventListener('mousemove', onGlobalMove); document.addEventListener('mouseup', onGlobalUp);
+        document.addEventListener('touchmove', (e) => { if (activeDrag || isSelecting) { if (e.cancelable) e.preventDefault(); onGlobalMove(e); } }, { passive: false });
+        document.addEventListener('touchend', onGlobalUp);
+
+        // --- TIME BLOCK MODALS & LOGIC ---
+        document.getElementById('new-task-btn').onclick = () => {
+            const typeKeys = Object.keys(savedCategories); const errDiv = document.getElementById('modal-error'); errDiv.style.display = 'none';
+            if (typeKeys.length === 0) { errDiv.innerText = "¡Primero añade una Categoría/Leyenda desde los controles superiores!"; errDiv.style.display = 'block'; }
+            currentEditOriginalName = "";
+            document.getElementById('modal-main-title').innerText = "Crear Nueva Tarea"; document.getElementById('modal-save').innerText = "Crear Tarea";
+            document.getElementById('modal-delete').style.display = 'none'; document.getElementById('modal-stash').style.display = 'none'; document.getElementById('modal-duplicate').style.display = 'none';
+            document.getElementById('modal-task-id').value = ""; document.getElementById('modal-task-name').value = "";
+            document.getElementById('name-status-indicator').innerHTML = "";
+            document.getElementById('global-rename-container').style.display = 'none';
+
+            renderDynamicTypeDropdown('modal-task-type'); if (typeKeys.length > 0) document.getElementById('modal-task-type').value = typeKeys[0];
+            document.getElementById('modal-task-day').value = (new Date().getDay() + 6) % 7; document.getElementById('modal-task-day').disabled = false;
+            document.getElementById('modal-start-time').value = formatTime(displayStartMins); document.getElementById('modal-end-time').value = formatTime(displayStartMins + 60);
+            modalQuill.root.innerHTML = "";
+            // AI instructions reset
+            document.getElementById('modal-ai-instructions').value = '';
+            document.getElementById('ai-instructions-container').style.display = 'none';
+            document.getElementById('ai-toggle-arrow').style.transform = 'rotate(0deg)';
+            document.getElementById('ai-badge').style.display = 'none';
+            document.getElementById('note-modal').classList.add('show');
+        };
+
+        function openBlockEditModal(evt, day) {
+            currentEditOriginalName = evt.name.trim();
+            document.getElementById('modal-main-title').innerText = "Editar Tarea"; document.getElementById('modal-save').innerText = "Guardar Cambios";
+            document.getElementById('modal-delete').style.display = 'block'; document.getElementById('modal-stash').style.display = 'block'; document.getElementById('modal-duplicate').style.display = 'block';
+            document.getElementById('modal-task-id').value = evt.id; document.getElementById('modal-task-original-day').value = day;
+            document.getElementById('modal-task-day').value = day; document.getElementById('modal-task-day').disabled = false;
+            document.getElementById('modal-task-name').value = evt.name;
+            document.getElementById('name-status-indicator').innerHTML = "";
+            document.getElementById('global-rename-container').style.display = 'block';
+            document.getElementById('global-rename-checkbox').checked = false;
+
+            renderDynamicTypeDropdown('modal-task-type'); if (document.querySelector(`#modal-task-type option[value="${evt.type}"]`)) document.getElementById('modal-task-type').value = evt.type;
+            document.getElementById('modal-start-time').value = formatTime(evt.start); document.getElementById('modal-end-time').value = formatTime((evt.start + evt.dur) % DAY_MINS);
+            modalQuill.root.innerHTML = savedNotes[currentEditOriginalName] || ""; document.getElementById('modal-error').style.display = 'none';
+            // AI instructions load
+            const aiInst = savedAIInstructions[currentEditOriginalName] || '';
+            document.getElementById('modal-ai-instructions').value = aiInst;
+            document.getElementById('ai-instructions-container').style.display = aiInst ? 'block' : 'none';
+            document.getElementById('ai-toggle-arrow').style.transform = aiInst ? 'rotate(90deg)' : 'rotate(0deg)';
+            document.getElementById('ai-badge').style.display = aiInst ? 'inline' : 'none';
+            document.getElementById('note-modal').classList.add('show');
+
+            updateNamePredictor();
+        }
+
+        document.getElementById('modal-duplicate').onclick = () => { document.getElementById('modal-task-id').value = ""; document.getElementById('modal-main-title').innerText = "Crear Tarea (Duplicado)"; document.getElementById('modal-save').innerText = "Crear Tarea"; document.getElementById('modal-delete').style.display = 'none'; document.getElementById('modal-stash').style.display = 'none'; document.getElementById('modal-duplicate').style.display = 'none'; document.getElementById('global-rename-container').style.display = 'none'; showToast(t('toast_duplication_mode_activated')); };
+
+        function updateNamePredictor() {
+            const val = document.getElementById('modal-task-name').value.trim();
+            const ind = document.getElementById('name-status-indicator');
+            const typeSelect = document.getElementById('modal-task-type');
+            const isGlobal = document.getElementById('global-rename-checkbox').checked;
+            const isNewTask = !document.getElementById('modal-task-id').value;
+
+            if (!val) { ind.innerText = ""; return; }
+
+            let existingType = null;
+            let nameExistsGlobally = false;
+
+            if (taskRegistry[val]) {
+                existingType = taskRegistry[val].type;
+                nameExistsGlobally = true;
+            } else if (savedNotes.hasOwnProperty(val)) {
+                nameExistsGlobally = true;
+            } else {
+                for (let d in calendarState) {
+                    let found = calendarState[d].find(el => el.name === val && el.id !== document.getElementById('modal-task-id').value);
+                    if (found) { existingType = found.type; nameExistsGlobally = true; break; }
+                }
+            }
+
+            if (existingType && document.querySelector(`#modal-task-type option[value="${existingType}"]`)) {
+                typeSelect.value = existingType;
+            }
+
+            if (isNewTask) {
+                if (nameExistsGlobally) ind.innerHTML = `<span style="color: #e67e22;">🔗 Se vinculará al grupo existente "${val}".</span>`;
+                else ind.innerHTML = `<span style="color: #2ecc71;">✨ Se creará un nuevo grupo.</span>`;
+                return;
+            }
+
+            if (val === currentEditOriginalName && currentEditOriginalName !== "") {
+                ind.innerHTML = `<span style="color: #555;">Editando tarea original.</span>`;
+                return;
+            }
+
+            if (isGlobal) {
+                if (nameExistsGlobally) {
+                    ind.innerHTML = `<span style="color: #e74c3c;">❌ El nombre ya existe. No puedes fusionar nombres globalmente. Elige otro.</span>`;
+                } else {
+                    ind.innerHTML = `<span style="color: #2ecc71;">🌍 Todas las tareas "${currentEditOriginalName}" cambiarán a "${val}".</span>`;
+                }
+            } else {
+                if (nameExistsGlobally) {
+                    ind.innerHTML = `<span style="color: #e67e22;">🔗 Se separará y se unirá al grupo "${val}".</span>`;
+                } else {
+                    ind.innerHTML = `<span style="color: #3498db;">✂️ Se separará de "${currentEditOriginalName}" como una nueva tarea.</span>`;
+                }
+            }
+        }
+
+        document.getElementById('modal-task-name').addEventListener('input', updateNamePredictor);
+        document.getElementById('global-rename-checkbox').addEventListener('change', updateNamePredictor);
+
+        // AI Instructions toggle
+        document.getElementById('ai-instructions-toggle').onclick = () => {
+            const container = document.getElementById('ai-instructions-container');
+            const arrow = document.getElementById('ai-toggle-arrow');
+            const isHidden = container.style.display === 'none';
+            container.style.display = isHidden ? 'block' : 'none';
+            arrow.style.transform = isHidden ? 'rotate(90deg)' : 'rotate(0deg)';
+        };
+
+        document.getElementById('modal-cancel').onclick = () => { document.getElementById('note-modal').classList.remove('show'); };
+
+        document.getElementById('modal-save').onclick = () => {
+            const id = document.getElementById('modal-task-id').value, originalDay = document.getElementById('modal-task-original-day').value, day = document.getElementById('modal-task-day').value;
+            const name = document.getElementById('modal-task-name').value.trim(), type = document.getElementById('modal-task-type').value;
+            const errDiv = document.getElementById('modal-error'), startVal = document.getElementById('modal-start-time').value, endVal = document.getElementById('modal-end-time').value;
+
+            if (!type) { errDiv.innerText = t('err_no_category'); errDiv.style.display = 'block'; return; }
+            if (!startVal || !endVal) { errDiv.innerText = t('err_no_times'); errDiv.style.display = 'block'; return; }
+            const start = parseTime(startVal); let dur = (parseTime(endVal) - start + DAY_MINS) % DAY_MINS; if (dur === 0) dur = DAY_MINS;
+            if (isCollision(start, dur, day, id || 'new')) { errDiv.innerText = t('err_collision'); errDiv.style.display = 'block'; return; }
+
+            let nameExistsGlobally = !!taskRegistry[name] || savedNotes.hasOwnProperty(name);
+            if (!nameExistsGlobally) {
+                for (let d in calendarState) { if (calendarState[d].some(el => el.name === name && el.id !== id)) { nameExistsGlobally = true; break; } }
+            }
+
+            const isGlobal = document.getElementById('global-rename-checkbox').checked;
+
+            if (id && name !== currentEditOriginalName && isGlobal && nameExistsGlobally) {
+                errDiv.innerText = t('err_name_exists');
+                errDiv.style.display = 'block';
+                return;
+            }
+
+            const finalName = name || (id ? "Tarea Sin Nombre" : "Nueva Tarea");
+            let savedHtml = modalQuill.root.innerHTML; if (savedHtml === '<p><br></p>') savedHtml = '';
+            // Save AI instructions
+            const aiText = document.getElementById('modal-ai-instructions').value.trim();
+            if (aiText) savedAIInstructions[finalName] = aiText;
+            else delete savedAIInstructions[finalName];
+
+            if (id && isGlobal && currentEditOriginalName && currentEditOriginalName !== finalName) {
+                if (savedNotes.hasOwnProperty(currentEditOriginalName)) {
+                    savedNotes[finalName] = savedNotes[currentEditOriginalName];
+                    delete savedNotes[currentEditOriginalName];
+                }
+                if (taskRegistry[currentEditOriginalName]) {
+                    taskRegistry[finalName] = taskRegistry[currentEditOriginalName];
+                    delete taskRegistry[currentEditOriginalName];
+                }
+                if (savedAIInstructions.hasOwnProperty(currentEditOriginalName)) {
+                    savedAIInstructions[finalName] = savedAIInstructions[currentEditOriginalName];
+                    delete savedAIInstructions[currentEditOriginalName];
+                }
+                for (let lName in layouts) {
+                    for (let d in layouts[lName]) {
+                        layouts[lName][d].forEach(evt => {
+                            if (evt.name === currentEditOriginalName) {
+                                evt.name = finalName;
+                                evt.type = type;
+                            }
+                        });
+                    }
+                }
+                for (let d in calendarState) {
+                    calendarState[d].forEach(evt => {
+                        if (evt.name === currentEditOriginalName) {
+                            evt.name = finalName;
+                            evt.type = type;
+                        }
+                    });
+                }
+            }
+
+            updateTaskRegistry(finalName, type, dur);
+
+            if (!id) {
+                calendarState[day].push({ id: "task-" + Date.now(), name: finalName, type: type, start: start, dur: dur });
+                if (!savedNotes.hasOwnProperty(finalName)) savedNotes[finalName] = savedHtml;
+                showToast(t('toast_task_created'));
+            } else {
+                let item;
+                if (day !== originalDay) { item = calendarState[originalDay].splice(calendarState[originalDay].findIndex(e => e.id === id), 1)[0]; calendarState[day].push(item); }
+                else { item = calendarState[day].find(e => e.id === id); }
+                if (item) { item.name = finalName; item.type = type; item.start = start; item.dur = dur; }
+                if (finalName === currentEditOriginalName || isGlobal || !savedNotes.hasOwnProperty(finalName)) savedNotes[finalName] = savedHtml;
+                showToast(t('toast_task_saved'));
+            }
+
+            for (let d in calendarState) calendarState[d].forEach(e => { if (e.name === finalName) e.type = type; });
+            saveToStorage(); renderCalendar(); document.getElementById('note-modal').classList.remove('show');
+
+            if (id && isGlobal && name !== currentEditOriginalName) showToast(t('toast_global_rename_applied', { newName: finalName }));
+        };
+
+        // --- DELETE & STASH BUTTON LOGIC ---
+        document.getElementById('modal-delete').onclick = () => {
+            const id = document.getElementById('modal-task-id').value; const day = document.getElementById('modal-task-day').value;
+            calendarState[day] = calendarState[day].filter(e => e.id !== id); delete savedState[id];
+            saveToStorage(); renderCalendar(); document.getElementById('note-modal').classList.remove('show');
+            showToast(t('toast_task_deleted'));
+        };
+        document.getElementById('delete-cancel').onclick = () => document.getElementById('delete-modal').classList.remove('show');
+        document.getElementById('delete-yes').onclick = () => {
+            const id = document.getElementById('modal-task-id').value, day = document.getElementById('modal-task-day').value;
+            calendarState[day] = calendarState[day].filter(e => e.id !== id); delete savedState[id]; saveToStorage(); renderCalendar(); document.getElementById('delete-modal').classList.remove('show'); document.getElementById('note-modal').classList.remove('show');
+        };
+
+        document.getElementById('modal-stash').onclick = () => {
+            const id = document.getElementById('modal-task-id').value; const day = document.getElementById('modal-task-original-day').value;
+            const evt = calendarState[day].find(e => e.id === id);
+            if (evt) updateTaskRegistry(evt.name, evt.type, evt.dur);
+            calendarState[day] = calendarState[day].filter(e => e.id !== id);
+            saveToStorage(); renderCalendar(); renderInventory();
+            document.getElementById('note-modal').classList.remove('show');
+            showToast(t('toast_task_stashed'));
+        };
+
+        document.getElementById('reset-btn').onclick = () => document.getElementById('confirm-modal').classList.add('show');
+        document.getElementById('confirm-cancel').onclick = () => document.getElementById('confirm-modal').classList.remove('show');
+        document.getElementById('confirm-yes').onclick = () => {
+            savedState = {}; saveToStorage(); renderCalendar(); updateProgress();
+            document.getElementById('confirm-modal').classList.remove('show');
+            showToast(t('toast_week_reset'));
+        };
+
+        // --- TERMINAL LOGIC ---
+        const termArea = document.getElementById('terminal-textarea'), termHighlight = document.getElementById('terminal-highlight'), termConsole = document.getElementById('terminal-console');
+        function logToTerminal(msg, type = 'info') { const line = document.createElement('div'); line.className = `console-line ${type}`; line.innerHTML = `<span style="color:#666">[${new Date().toLocaleTimeString('es-ES', { hour12: false })}]</span> > ${msg}`; termConsole.appendChild(line); termConsole.scrollTop = termConsole.scrollHeight; }
+        function updateHighlighting() {
+            let text = termArea.value.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            text = text.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => {
+                let cls = 'syn-number'; if (/^"/.test(m)) cls = /:$/.test(m) ? 'syn-key' : 'syn-string'; else if (/true|false/.test(m)) cls = 'syn-boolean'; else if (/null/.test(m)) cls = 'syn-null';
+                return `<span class="${cls}">${m}</span>`;
+            });
+            termHighlight.innerHTML = text;
+        }
+        termArea.addEventListener('scroll', () => { document.getElementById('terminal-pre').scrollTop = termArea.scrollTop; document.getElementById('terminal-pre').scrollLeft = termArea.scrollLeft; });
+        termArea.addEventListener('input', updateHighlighting);
+
+        document.getElementById('terminal-btn').onclick = async () => {
+            layouts[currentLayoutName] = JSON.parse(JSON.stringify(calendarState));
+            termArea.value = JSON.stringify({
+                version: "2.0-CoC",
+                layouts: layouts,
+                currentLayout: currentLayoutName,
+                registry: taskRegistry,
+                categories: savedCategories,
+                events: savedEvents,
+                checks: savedState,
+                notes: savedNotes,
+                prompts: savedPrompts,
+                ai_instructions: savedAIInstructions
+            }, null, 2);
+            updateHighlighting(); termConsole.innerHTML = ''; logToTerminal("Inicializando Terminal CoC v2...", "info"); document.getElementById('terminal-modal').classList.add('show');
+            // Show last sync status on terminal open
+            const lastSync = await idbStorage.idbGet('lifeOsLastSync');
+            const syncStatus = document.getElementById('sync-status');
+            if (lastSync) {
+                const d = new Date(lastSync);
+                syncStatus.textContent = '✅ Último sync: ' + d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', { hour12: false });
+                syncStatus.style.color = '#2ecc71';
+            } else {
+                syncStatus.textContent = 'Sin sincronizar';
+                syncStatus.style.color = '#888';
+            }
+        };
+
+        document.getElementById('terminal-close-dot').onclick = () => document.getElementById('terminal-modal').classList.remove('show');
+        document.getElementById('terminal-copy').onclick = () => { termArea.select(); document.execCommand('copy'); logToTerminal("Código copiado al portapapeles.", "success"); };
+
+        document.getElementById('terminal-apply').onclick = () => {
+            const val = termArea.value.trim();
+            if (val === "") {
+                layouts = { "Default": { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [] } }; currentLayoutName = "Default"; calendarState = layouts["Default"]; taskRegistry = {}; savedState = {}; savedNotes = {}; savedCategories = {}; savedEvents = [];
+                saveToStorage(); reInitApp(); logToTerminal("Purga completa. Datos borrados.", "success"); setTimeout(() => document.getElementById('terminal-modal').classList.remove('show'), 1000); return;
+            }
+            try {
+                const data = JSON.parse(val);
+                if (data.layouts) {
+                    layouts = data.layouts;
+                    currentLayoutName = data.currentLayout || Object.keys(layouts)[0];
+                    calendarState = layouts[currentLayoutName];
+                    taskRegistry = data.registry || {};
+                } else if (data.state) {
+                    logToTerminal("Detectado JSON Legacy (v1). Migrando a CoC v2...", "info");
+                    layouts = { "Default": data.state };
+                    currentLayoutName = "Default";
+                    calendarState = layouts["Default"];
+                    taskRegistry = {};
+                    for (let d in calendarState) calendarState[d].forEach(t => { if (!taskRegistry[t.name]) taskRegistry[t.name] = { type: t.type, dur: t.dur }; });
+                    if (data.notes) {
+                        const fallbackType = Object.keys(data.categories || {})[0] || 'default';
+                        for (let noteName in data.notes) {
+                            if (!taskRegistry[noteName]) taskRegistry[noteName] = { type: fallbackType, dur: 60 };
+                        }
+                    }
+                } else throw new Error("Estructura inválida");
+
+                savedCategories = data.categories || {}; savedEvents = data.events || []; savedState = data.checks || {}; savedNotes = data.notes || {};
+                if (data.prompts) savedPrompts = data.prompts;
+                if (data.ai_instructions) savedAIInstructions = data.ai_instructions;
+                saveToStorage(); reInitApp(); logToTerminal("¡Sincronización de Layouts exitosa!", "success"); setTimeout(() => document.getElementById('terminal-modal').classList.remove('show'), 1000);
+            } catch (e) { logToTerminal(`Error: ${e.message}`, "error"); }
+        };
+
+        // --- SYSTEM SYNC LOGIC ---
+        let syncDirHandle = null;
+
+        function buildFullJSON() {
+            layouts[currentLayoutName] = JSON.parse(JSON.stringify(calendarState));
+            return JSON.stringify({
+                version: "2.0-CoC",
+                layouts: layouts,
+                currentLayout: currentLayoutName,
+                registry: taskRegistry,
+                categories: savedCategories,
+                events: savedEvents,
+                checks: savedState,
+                notes: savedNotes,
+                prompts: savedPrompts,
+                ai_instructions: savedAIInstructions
+            }, null, 2);
+        }
+
+        async function updateSyncStatus() {
+            const lastSync = await idbStorage.idbGet('lifeOsLastSync');
+            const syncStatus = document.getElementById('sync-status');
+            if (lastSync) {
+                const d = new Date(lastSync);
+                syncStatus.textContent = '✅ Último sync: ' + d.toLocaleDateString('es-ES') + ' ' + d.toLocaleTimeString('es-ES', { hour12: false });
+                syncStatus.style.color = '#2ecc71';
+            }
+        }
+
+        const supportsFileSystemAccess = ('showDirectoryPicker' in window);
+
+        async function refreshBackupList() {
+            if (!supportsFileSystemAccess || !syncDirHandle || syncDirHandle === 'fallback') return;
+
+            const select = document.getElementById('terminal-backup-select');
+            const loadBtn = document.getElementById('terminal-load-backup');
+            select.innerHTML = '<option value="" disabled selected>Selecciona un backup...</option>';
+
+            let hasFiles = false;
+            try {
+                for await (const entry of syncDirHandle.values()) {
+                    if (entry.kind === 'file' && entry.name.endsWith('.json')) {
+                        const option = document.createElement('option');
+                        option.value = entry.name;
+                        option.textContent = entry.name;
+                        select.appendChild(option);
+                        hasFiles = true;
+                    }
+                }
+            } catch (e) {
+                console.error("Error reading dir", e);
+            }
+
+            if (hasFiles) {
+                select.style.display = 'inline-block';
+                loadBtn.style.display = 'inline-block';
+            } else {
+                select.style.display = 'none';
+                loadBtn.style.display = 'none';
+            }
+        }
+
+        document.getElementById('terminal-select-folder').onclick = async () => {
+            if (supportsFileSystemAccess) {
+                try {
+                    syncDirHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+                    document.getElementById('terminal-sync').disabled = false;
+                    logToTerminal(`📂 Carpeta seleccionada: <strong>${syncDirHandle.name}</strong>`, 'success');
+                    await refreshBackupList();
+                } catch (err) {
+                    if (err.name !== 'AbortError') logToTerminal(`Error al seleccionar carpeta: ${err.message}`, 'error');
+                }
+            } else {
+                // Fallback: direct download
+                syncDirHandle = 'fallback';
+                document.getElementById('terminal-sync').disabled = false;
+                logToTerminal('📂 Tu navegador no soporta selección de carpeta. Se descargará directamente.', 'info');
+            }
+        };
+
+        document.getElementById('terminal-sync').onclick = async () => {
+            const jsonStr = buildFullJSON();
+            const now = new Date();
+            const syncName = `LifeOS_Data_${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}.json`;
+
+            if (supportsFileSystemAccess && syncDirHandle && syncDirHandle !== 'fallback') {
+                try {
+                    const fileHandle = await syncDirHandle.getFileHandle(syncName, { create: true });
+                    const writable = await fileHandle.createWritable();
+                    await writable.write(jsonStr);
+                    await writable.close();
+                    await idbStorage.idbSet('lifeOsLastSync', now.toISOString());
+                    await updateSyncStatus();
+                    await refreshBackupList();
+                    logToTerminal(`💾 <strong>${syncName}</strong> guardado en <strong>${syncDirHandle.name}/</strong>`, 'success');
+                    logToTerminal(`⏰ Sync completado: ${now.toLocaleDateString('es-ES')} ${now.toLocaleTimeString('es-ES', { hour12: false })}`, 'info');
+                } catch (err) {
+                    logToTerminal(`Error al guardar: ${err.message}`, 'error');
+                }
+            } else {
+                // Fallback: standard download
+                const blob = new Blob([jsonStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = syncName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                await idbStorage.idbSet('lifeOsLastSync', now.toISOString());
+                await updateSyncStatus();
+                logToTerminal(`💾 <strong>${syncName}</strong> descargado.`, 'success');
+                logToTerminal(`⏰ Sync completado: ${now.toLocaleDateString('es-ES')} ${now.toLocaleTimeString('es-ES', { hour12: false })}`, 'info');
+            }
+        };
+
+        document.getElementById('terminal-load-backup').onclick = async () => {
+            const select = document.getElementById('terminal-backup-select');
+            const selectedFile = select.value;
+            if (!selectedFile) {
+                showToast(t('toast_select_file_first'));
+                return;
+            }
+
+            try {
+                // 1. Auto-save current state
+                const now = new Date();
+                const autoSaveName = `LifeOS_AutoSave_${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}_${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}.json`;
+                const currentJsonStr = buildFullJSON();
+                const autoSaveHandle = await syncDirHandle.getFileHandle(autoSaveName, { create: true });
+                const autoSaveWritable = await autoSaveHandle.createWritable();
+                await autoSaveWritable.write(currentJsonStr);
+                await autoSaveWritable.close();
+                logToTerminal(`🔌 [Protección] Estado actual respaldado como <strong>${autoSaveName}</strong> antes de cargar.`, 'success');
+
+                // 2. Read selected JSON
+                const fileHandle = await syncDirHandle.getFileHandle(selectedFile);
+                const file = await fileHandle.getFile();
+                const text = await file.text();
+
+                // 3. Place into terminal correctly
+                termArea.value = text;
+                updateHighlighting();
+
+                // Clear console and show info
+                termConsole.innerHTML = '';
+                logToTerminal(`📂 Archivo <strong>${selectedFile}</strong> cargado en el terminal.`, 'info');
+                logToTerminal(`⚠️ IMPORTANTE: Haz clic en el botón verde <strong>"Ejecutar (Aplicar)"</strong> para aplicar los datos a LifeOS.`, 'success');
+
+                await refreshBackupList();
+            } catch (err) {
+                logToTerminal(`Error al cargar archivo: ${err.message}`, 'error');
+            }
+        };
+
+        function updateProgress() {
+            let t = 0, c = 0; for (let d in calendarState) calendarState[d].forEach(e => { t++; if (savedState[e.id]) c++; });
+            const pct = t === 0 ? 0 : Math.round((c / t) * 100); document.getElementById('progress-bar-fill').style.width = pct + '%'; document.getElementById('progress-text').innerText = `${pct}% Completado (${c}/${t})`;
+        }
+
+        function updateTimeLine() {
+            const now = new Date(), h = now.getHours(), m = now.getMinutes(), mins = h * 60 + m;
+            let visualMins = (mins - displayStartMins + DAY_MINS) % DAY_MINS;
+            const line = document.getElementById('current-time-line'), timeColRender = document.getElementById('time-col-render');
+            line.style.top = ((visualMins) * SCALE + (timeColRender ? timeColRender.offsetTop : 45)) + 'px'; line.style.display = 'block';
+            document.querySelectorAll('.event.in-progress').forEach(ev => ev.classList.remove('in-progress'));
+            let dayIdx = (now.getDay() + 6) % 7; if (mins < displayStartMins) dayIdx = (dayIdx + 6) % 7;
+            let found = false, name = "Tiempo Libre / Descanso", currentType = null;
+            if (calendarState[dayIdx]) calendarState[dayIdx].forEach(e => {
+                let eEnd = e.start + e.dur;
+                if ((eEnd <= DAY_MINS) ? (mins >= e.start && mins < eEnd) : (mins >= e.start || mins < (eEnd % DAY_MINS))) {
+                    found = true; name = e.name; currentType = e.type;
+                    document.querySelectorAll(`.event[data-id="${e.id}"]`).forEach(el => { if (!savedState[e.id]) el.classList.add('in-progress'); });
+                }
+            });
+            document.getElementById('current-task-name').innerText = name;
+            const banner = document.getElementById('current-task-banner');
+            if (found && currentType && savedCategories[currentType]) {
+                const cat = savedCategories[currentType]; document.body.style.backgroundColor = cat.bg; document.getElementById('main-header').style.color = cat.text || "#1C2833";
+                banner.style.cssText = `background-color: ${cat.bg}; border-color: ${cat.border}; color: ${cat.text || "#1C2833"}; --pulse-color: ${cat.border};`; banner.classList.add('pulsing');
+            } else {
+                document.body.style.backgroundColor = '#f8f9fa'; document.getElementById('main-header').style.color = "#1C2833";
+                banner.style.cssText = `background-color: #fff; border-color: transparent; color: #1C2833;`; banner.classList.remove('pulsing');
+            }
+        }
+
+        function reInitApp() {
+            updateLayoutDropdown();
+            renderDynamicStyles();
+            renderDynamicLegend();
+            renderWeekHeadersAndEvents();
+            renderCalendar();
+        }
+
+        // --- QUILL EDITOR INITIALIZATION ---
+        const quillToolbarOptions = [
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'list': 'check' }],
+            [{ 'header': [1, 2, 3, false] }],
+            [{ 'color': [] }, { 'background': [] }],
+            ['clean']
+        ];
+        const nmQuill = new Quill('#nm-quill-editor', { theme: 'snow', modules: { toolbar: quillToolbarOptions }, placeholder: 'Escribe tu nota rica aquí...' });
+        const modalQuill = new Quill('#modal-quill-editor', { theme: 'snow', modules: { toolbar: quillToolbarOptions }, placeholder: 'Notas o checklists...' });
+
+        // Initialize application via async bootloader
+        bootloader();
+    </script>
+</body>
+
+</html>
